@@ -14,7 +14,6 @@
             }
             else {
                 foreach($data["posts"] as $post) {
-                    $post["post_content"] = (strlen($post["post_content"]) > 35) ? substr($post["post_content"], 0, 35)."..." : $post["post_content"];
                     showPost($post, true);
                 }
             }
@@ -30,6 +29,8 @@
             </ul>
 
         </div>
+        <?php
+        require_once APP_ROOT."/views/includes/sidebar.php";
+        ?>
     </div>
-</div>
 <?php require_once APP_ROOT . "/views/includes/footer.php";?>

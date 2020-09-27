@@ -14,12 +14,12 @@ class MainController extends Controller {
     public function cat($cat_id = NULL) {
         if (isset($cat_id)) {
             $cat_id = (int)$cat_id;
-            $cat = $this->model->getCategories($cat_id);
-            $this->view("Main/cat", $cat);
+            $data = $this->model->getCategories($cat_id);
+            $this->view("Main/cat", $data);
         }
         else {
-            $cat = $this->model->getCategories();
-            $this->view("Main/cat", $cat);
+            header("Location: ".URL_ROOT);
+            exit();
         }
     }
 }

@@ -15,25 +15,6 @@ class MainModel implements Model {
         $this->users = CrudUsersController::getInstance();
     }
 
-    public function getData() {
-        $data = array();
-        $data["categories"] = $this->getCategories();
-        $data["posts"] = $this->getPosts();
-        session_start();
-        $_SESSION["auth"] = true;
-        $_SESSION["user_id"] = 7; // THIS IS JUST FOR A TEST
-        if (isset($_SESSION["auth"])) {
-            $data["users"] = $this->getUsers($_SESSION["user_id"]);
-            if ($data["users"][0]["user_role"] == "admin") {
-                $data["adminButton"] = true;
-            }
-            else {
-                $data["adminButton"] = false;
-            }
-        }
-        return $data;
-    }
-
     private function getCategories($cat_id = NULL) {
         if (isset($cat_id)) {
             $sql = "SELECT * from category where cat_id = :id";
@@ -67,5 +48,37 @@ class MainModel implements Model {
             $sql = "SELECT * from users";
             return $this->users->getRows($sql);
         }
+    }
+
+    public function getData() {
+        $data = array();
+        $data["categories"] = $this->getCategories();
+        $data["posts"] = $this->getPosts();
+        foreach($data["posts"] as &$post) {
+            $post["post_content"] = (strlen($post["post_content"]) > 35) ? substr($post["post_content"], 0, 35) . "..." : $post["post_content"];
+        }
+        session_start();
+        $_SESSION["auth"] = true;
+        $_SESSION["user_id"] = 7; // THIS IS JUST FOR A TEST
+        if (isset($_SESSION["auth"])) {
+            $data["users"] = $this->getUsers($_SESSION["user_id"]);
+            if ($data["users"][0]["user_role"] == "admin") {
+                $data["adminButton"] = true;
+            }
+            else {
+                $data["adminButton"] = false;
+            }
+        }
+        return $data;
+    }
+
+    public function getCatPage($cat_id) {
+        $data = array();
+        $data["categories"] = $this->getCategories();
+        /*
+         * TODO: implement a proper way to select all posts through private function
+         * and make this part of the model available, I want to sleep
+         */
+        $data["posts"] = $this->posts->getRows();
     }
 }
