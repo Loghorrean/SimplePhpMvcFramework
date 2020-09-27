@@ -25,6 +25,19 @@ trait basicPdoFunctions {
         return $this->pdo->rollBack();
     }
 
+    private function getDataType($value) {
+        switch(true) {
+            case is_int($value) :
+                return "\PDO::PARAM_INT";
+            case is_bool($value) :
+                return "\PDO::PARAM_BOOL";
+            case is_null($value) :
+                return "\PDO::PARAM_NULL";
+            default :
+                return "\PDO::PARAM_STR";
+        }
+    }
+
     protected function run($sql, $values = []) {
         try {
             if (!empty($values)) {
@@ -32,23 +45,10 @@ trait basicPdoFunctions {
                 // $key is a mark for the prepare statement (like :id, :name and so on)
                 // $v is what you want to insert into the database
                 foreach ($values as $key => &$v) {
-                    // by default data_type is null
-                    $data_type = null;
-                    // Here we find the data_type
-                    switch(true) {
-                        case is_int($v):
-                            $data_type = \PDO::PARAM_INT;
-                            break;
-                        case is_bool($v):
-                            $data_type = \PDO::PARAM_BOOL;
-                            break;
-                        case is_null($v):
-                            $data_type = \PDO::PARAM_NULL;
-                            break;
-                        default:
-                            $data_type = \PDO::PARAM_STR;
-                    }
-                    $query->bindValue($key, $v, $data_type);
+//                    $data_type = $this->getDataType($v);
+//                    echo $data_type;
+                    // TODO: fix issue with dynamic data_type
+                    $query->bindValue($key, $v);
                 }
                 $query->execute();
                 return $query;
