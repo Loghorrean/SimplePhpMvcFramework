@@ -1,5 +1,6 @@
 <?php
 namespace App\Models;
+use App\Classes\CrudCommentsController;
 use App\Classes\Model;
 use App\Classes\CrudPostsController;
 use App\Classes\CrudCategoriesController;
@@ -8,11 +9,13 @@ class MainModel implements Model {
     private $categories;
     private $posts;
     private $users;
+    private $comments;
 
     public function __construct() {
         $this->categories = CrudCategoriesController::getInstance();
         $this->posts = CrudPostsController::getInstance();
         $this->users = CrudUsersController::getInstance();
+        $this->comments = CrudCommentsController::getInstance();
     }
 
     private function getCategories($cat_id = NULL) {
@@ -42,7 +45,7 @@ class MainModel implements Model {
     private function getUsers($user_id = NULL) {
         if (isset($user_id)) {
             $sql = "SELECT * from users where user_id = :id";
-            return $this->users->getRows($sql, ["id" => $user_id]);
+            return $this->users->getRow($sql, ["id" => $user_id]);
         }
         else {
             $sql = "SELECT * from users";
@@ -61,12 +64,7 @@ class MainModel implements Model {
         $_SESSION["user_id"] = 7; // THIS IS JUST FOR A TEST
         if (isset($_SESSION["auth"])) {
             $data["users"] = $this->getUsers($_SESSION["user_id"]);
-            if ($data["users"][0]["user_role"] == "admin") {
-                $data["adminButton"] = true;
-            }
-            else {
-                $data["adminButton"] = false;
-            }
+            $data["adminButton"] = $this->checkUserRights($data["users"]);
         }
         return $data;
     }
@@ -87,12 +85,7 @@ class MainModel implements Model {
         $data["category_name"] = $this->getCategories($cat_id)[0]["cat_title"];
         if (isset($_SESSION["auth"])) {
             $data["users"] = $this->getUsers($_SESSION["user_id"]);
-            if ($data["users"][0]["user_role"] == "admin") {
-                $data["adminButton"] = true;
-            }
-            else {
-                $data["adminButton"] = false;
-            }
+            $data["adminButton"] = $this->checkUserRights($data["users"]);
         }
         return $data;
     }
@@ -107,13 +100,46 @@ class MainModel implements Model {
         $data["posts"] = $this->posts->getRows($sql, ["tag" => $tag]);
         if (isset($_SESSION["auth"])) {
             $data["users"] = $this->getUsers($_SESSION["user_id"]);
-            if ($data["users"][0]["user_role"] == "admin") {
-                $data["adminButton"] = true;
-            }
-            else {
-                $data["adminButton"] = false;
-            }
+            $data["adminButton"] = $this->checkUserRights($data["users"]);
         }
         return $data;
     }
+
+    public function getPostPage($post_id) {
+        $data = array();
+        $data["categories"] = $this->getCategories();
+        $sql = "SELECT users.username as 'username', posts.* from posts ";
+        $sql .= "left join users on users.user_id = posts.post_author_id where post_status = 'published' and post_id = :id";
+        $data["post"] = $this->posts->getRow($sql, ["id" => $post_id]);
+        if (isset($_SESSION["auth"])) {
+            $data["users"] = $this->getUsers($_SESSION["user_id"]);
+            $data["adminButton"] = $this->checkUserRights($data["users"]);
+            $data["editButton"] = $this->checkEditButton($data["users"], $data["post"]["post_author_id"]);
+        }
+        $sql = "SELECT users.username as 'comment_author', comments.* from comments ";
+        $sql .= "left join users on users.user_id = comments.comment_author_id where comment_post_id = :id ";
+        $sql .= "and comment_status = 'Approved' Order By comment_id DESC";
+        $data["comments"] = $this->comments->getRows($sql, ["id" => $post_id]);
+        return $data;
+    }
+
+    private function checkUserRights($user) {
+        $user_role = $user["user_role"];
+        if ($user_role == "admin") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    private function checkEditButton($user, $post_author_id) {
+        if ($this->checkUserRights($user) || $post_author_id == $user["user_id"]) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
 }

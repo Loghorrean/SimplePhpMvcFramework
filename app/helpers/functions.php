@@ -346,10 +346,10 @@ function showDeletePostForm($post_id, $pdo) { // showing the form to delete a po
 }
 
 function showPost($row, $read_more = false) {
-    echo '<h2><a href="post.php?p_id=' . $row["post_id"] . '">' . htmlspecialchars($row["post_title"]) . '</a></h2>';
-    echo '<p class = "lead">by <a href="author.php?auth_name='.$row["username"].'">' . htmlspecialchars($row["username"]) . '</a></p><hr>';
+    echo '<h2><a href="/mvcframework/main/post/'.$row["post_id"].'">' . htmlspecialchars($row["post_title"]) . '</a></h2>';
+    echo '<p class = "lead">by <a href="/mvcframework/main/author/'.$row["username"].'">' . htmlspecialchars($row["username"]) . '</a></p><hr>';
     echo '<p><span class="glyphicon glyphicon-time"></span> Posted on ' . htmlspecialchars($row["post_date"]) . '</p><hr>';
-    echo '<a href="post.php?p_id=' . $row["post_id"] . '"><img class="img-responsive" src="'.URL_ROOT.'/public/images/'. $row["post_image"] . '" alt="Loading..."></a><hr>';
+    echo '<a href="/mvcframework/main/post/'.$row["post_id"].'"><img class="img-responsive" src="'.URL_ROOT.'/public/images/'. $row["post_image"] . '" alt="Loading..."></a><hr>';
     echo '<p style="font-weight: 700">' . $row["post_content"] . '</p>';
     if ($read_more) {
         echo '<a class="btn btn-primary" href="post.php?p_id='.$row["post_id"].'">Read More ';

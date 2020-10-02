@@ -36,6 +36,19 @@ class MainController extends Controller {
         }
         else {
             header("Location: ".URL_ROOT);
+            exit();
+        }
+    }
+
+    public function post($post_id = NULL) {
+        if (isset($post_id)) {
+            $post_id = (int)$post_id;
+            $data = $this->model->getPostPage($post_id);
+            $this->view("Main/post", $data);
+        }
+        else {
+            header("Location: ".URL_ROOT);
+            exit();
         }
     }
 }
