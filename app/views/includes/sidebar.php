@@ -37,7 +37,7 @@
 
     <div class="well">
         <h4>Blog Search</h4>
-        <form action="search.php" method="POST">
+        <form action="/mvcframework/main/search" method="POST">
             <div class="input-group">
                 <input type="text" name = "search" class="form-control">
                 <span class="input-group-btn">

@@ -15,8 +15,9 @@ abstract class Controller {
     //Requiring a view by name and passing it data if needed
 
     public function view($view, $data = []) {
-        if (file_exists(__DIR__."/../views/".$view."View.php")) {
-            require_once __DIR__."/../views/".$view."View.php";
+        $view .= "View";
+        if (file_exists(__DIR__."/../views/".$view.".php")) {
+            require_once __DIR__."/../views/".$view.".php";
         }
         else {
             die("View does not exist");
