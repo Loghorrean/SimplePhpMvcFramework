@@ -18,6 +18,10 @@ class AdminModel implements Model {
         $this->comments = CrudCommentsController::getInstance();
     }
 
+    private function getCommonData() {
+        //TODO: Need to fetch values, that are used across all pages
+    }
+
     public function getData() {
         $data = array();
         $data["current_user"] = $_SESSION["username"];
@@ -38,8 +42,28 @@ class AdminModel implements Model {
     }
 
     public function getCategoriesPage() {
+        if (isset($_POST["submit_add"])) {
+            $this->categories->Insert(["cat_ttl" => $_POST["cat_title"]]);
+            $_SESSION["success"] = "Category added";
+            header("Location: /mvcframework/admin/categories");
+            exit();
+        }
+        if (isset($_POST["submit_delete"])) {
+            $this->categories->Delete(["id" => $_POST["cat_id"]]);
+            $_SESSION["success"] = "Category deleted";
+            header("Location: /mvcframework/admin/categories");
+            exit();
+        }
+        if (isset($_POST["submit_edit"])) {
+            $this->categories->Update(["ttl" => $_POST["cat_title"], "id" => $_POST["cat_id"]]);
+            $_SESSION["success"] = "Category edited";
+            header("Location: /mvcframework/admin/categories");
+            exit();
+        }
         $data = array();
-
+        $data["current_user"] = $_SESSION["username"];
+        $sql = "SELECT * from category";
+        $data["categories"] = $this->categories->getRows($sql);
         return $data;
     }
 
@@ -72,6 +96,62 @@ class AdminModel implements Model {
         $data = array();
         $sql = "SELECT * from category";
         $data["categories"] = $this->categories->getRows($sql);
+        return $data;
+    }
+
+    public function getEditPostPage() {
+        $data = array();
+
+        return $data;
+    }
+
+    public function getUsersPage() {
+        if (isset($_POST["submit_delete"])) {
+            $this->users->Delete(["id" => $_POST["user_id"]]);
+            $_SESSION["success"] = "User deleted!";
+            header("Location: /mvcframework/admin/users");
+            exit();
+        }
+        $data = array();
+        $sql = "SELECT * from users";
+        $data["users"] = $this->users->getRows($sql);
+        return $data;
+    }
+
+    public function getAddUsersPage() {
+        if (isset($_POST["add_user"])) {
+            if (!checkPassword($_POST["user_password"])) {
+                header("Location: /mvcframework/admin/users?source=add_user");
+                exit();
+            }
+            elseif (!checkUserExistance($_POST["username"])) {
+                header("Location: /mvcframework/admin/users?source=add_user");
+                exit();
+            }
+            $salt = generateSalt();
+            $password = hash("md5", $salt.$_POST["password"]);
+            //TODO: implement the way to insert user_images
+            $this->users->Insert(["name" => $_POST["username"], "pwd" => $password, "lname" => $_POST["user_lastname"],
+                "fname" => $_POST["user_firstname"], "mail" => $_POST["user_email"], "img" => NULL,
+                "role" => $_POST["user_role"], "salt" => $salt]);
+            $_SESSION["success"] = "User inserted!";
+            header("Location: /mvcframework/admin/users");
+            exit();
+        }
+    }
+
+    public function getCommentsPage() {
+        if (isset($_POST["submit_delete"])) {
+            $this->comments->Delete(["id" => $_POST["comment_id"], "post_id" => $_POST["comment_post_id"]]);
+            $_SESSION["success"] = "Comment deleted!";
+            header("Location: /mvcframework/admin/comments");
+            exit();
+        }
+        $data = array();
+        $sql = "SELECT posts.post_title as 'post_title', users.username as 'username', users.user_email as 'user_email', comments.* from comments ";
+        $sql .= "inner join posts on comments.comment_post_id = posts.post_id ";
+        $sql .= "left join users on comments.comment_author_id = users.user_id";
+        $data["comments"] = $this->comments->getRows($sql);
         return $data;
     }
 }

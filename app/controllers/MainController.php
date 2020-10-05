@@ -12,10 +12,10 @@ class MainController extends Controller {
         $this->view("Main/index", $data);
     }
 
-    public function cat($cat_id = NULL) {
-        if (isset($cat_id)) {
-            $cat_id = (int)$cat_id;
-            $data = $this->model->getCatPage($cat_id);
+    public function cat($cat_title = NULL) {
+        if (isset($cat_title)) {
+            $cat_title = (string)$cat_title;
+            $data = $this->model->getCatPage($cat_title);
             $this->view("Main/cat", $data);
         }
         else {

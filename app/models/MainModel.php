@@ -69,20 +69,22 @@ class MainModel implements Model {
         return $data;
     }
 
-    public function getCatPage($cat_id) {
+    public function getCatPage($cat_title) {
         $data = array();
         $data["categories"] = $this->getCategories();
         /*
          * TODO: implement a proper way to select all posts through private function
          * and make this part of the model available, I want to sleep
          */
-        $sql = "SELECT users.username as 'username', posts.* from posts ";
-        $sql .= "left join users on users.user_id = posts.post_author_id where post_status = 'published' and post_category_id = :id";
-        $data["posts"] = $this->posts->getRows($sql, ["id" => $cat_id]);
+        $sql = "SELECT users.username as 'username', posts.*, category.cat_title as 'cat_title' from posts ";
+        $sql .= "left join users on users.user_id = posts.post_author_id ";
+        $sql .= "inner join category on category.cat_id = posts.post_category_id ";
+        $sql .= "where post_status = 'published' and cat_title = :ttl";
+        $data["posts"] = $this->posts->getRows($sql, ["ttl" => $cat_title]);
         foreach($data["posts"] as &$post) {
             $post["post_content"] = (strlen($post["post_content"]) > 35) ? substr($post["post_content"], 0, 35) . "..." : $post["post_content"];
         }
-        $data["category_name"] = $this->getCategories($cat_id)[0]["cat_title"];
+        $data["category_name"] = $cat_title;
         if (isset($_SESSION["auth"])) {
             $data["users"] = $this->getUsers($_SESSION["user_id"]);
             $data["adminButton"] = $this->checkUserRights($data["users"]);

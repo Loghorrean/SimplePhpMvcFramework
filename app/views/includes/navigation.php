@@ -15,7 +15,7 @@
             <ul class="nav navbar-nav">
                 <?php
                 foreach ($data["categories"] as $category) {
-                    echo "<li><a href = '".URL_ROOT."/main/cat/{$category["cat_id"]}'>{$category["cat_title"]}</a></li>";
+                    echo "<li><a href = '".URL_ROOT."/main/cat/{$category["cat_title"]}'>{$category["cat_title"]}</a></li>";
                 }
                 if (isset($data["adminButton"])) {
                     echo "<li style = 'font-weight: bold;'><a style = 'color: red;' href = '".URL_ROOT."/admin'>Admin</a></li>";

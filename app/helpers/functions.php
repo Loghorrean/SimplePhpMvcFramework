@@ -25,12 +25,11 @@ function showSuccess() { // showing success messages
 
 
 
-function findCategoriesById($cat_id, $pdo) {
+function findCategoriesById($cat_id) {
     $sql = "SELECT category.*, count(cat_id) as 'count' from category where cat_id = :id";
     $category = CrudCategoriesController::getInstance()->getRow($sql, ["id" => $cat_id]);
     if ($category["count"] == "0") {
         $_SESSION["error"] = "No category with such id!";
-        header("categories.php");
         return false;
     }
     else {
@@ -43,7 +42,6 @@ function findPostsById($p_id) {
     $post = CrudPostsController::getInstance()->getRow($sql, ["id" => $p_id]);
     if ($post["count"] == "0") {
         $_SESSION["error"] = "No post with such id!";
-        header("posts.php");
         return false;
     }
     else {
@@ -51,33 +49,28 @@ function findPostsById($p_id) {
     }
 }
 
-function findCommentsById($com_id, $pdo) {
-    $query = $pdo->prepare("SELECT comments.*, count(comment_id) as 'count' from comments where comment_id = :id");
-    $query->bindParam(":id", $com_id);
-    $query->execute();
-    $row = $query->fetch(PDO::FETCH_LAZY);
-    if ($row["count"] == "0") {
+function findCommentsById($com_id) {
+    $sql = "SELECT comments.*, count(comment_id) as 'count' from comments where comment_id = :id";
+    $comment = CrudCommentsController::getInstance()->getRow($sql, ["id" => $com_id]);
+    if ($comment["count"] == "0") {
         $_SESSION["error"] = "No comment with such id!";
         header("Location: comments.php");
         return false;
     }
     else {
-        return $row;
+        return $comment;
     }
 }
 
-function findUsersById($u_id, $pdo) {
-    $query = $pdo->prepare("SELECT users.*, count(user_id) as 'count' from users where user_id = :id");
-    $query->bindParam(":id", $u_id);
-    $query->execute();
-    $row = $query->fetch(PDO::FETCH_LAZY);
-    if ($row["count"] == "0") {
+function findUsersById($u_id) {
+    $sql = "SELECT users.*, count(user_id) as 'count' from users where user_id = :id";
+    $user = CrudUsersController::getInstance()->getRow($sql, ["id" => $u_id]);
+    if ($user["count"] == "0") {
         $_SESSION["error"] = "No user with such id!";
-        header("Location: users.php");
         return false;
     }
     else {
-        return $row;
+        return $user;
     }
 }
 
@@ -295,49 +288,47 @@ function editUser($values, $pdo, $path = "users.php") {
 /* Functions that create forms to confirm an action */
 
 
-function showEditCategoryForm($cat_id, $pdo) { // showing the form to edit a category
-    if (!checkId($cat_id)) {
-        header("Location: categories.php");
-        exit();
+function showEditCategoryForm($cat_id) { // showing the form to edit a category
+    $category = findCategoriesById($cat_id);
+    if ($category !== false) {
+        echo '<div class = "form-group">';
+        echo '<label for = "cat_title">Edit Category Title (id = '.$category["cat_id"].')</label>';
+        echo '<input class = "form-control" type="text" value = "'.$category["cat_title"].'" name="cat_title">';
+        echo '<input type="hidden" value = "'.$category['cat_id'].'" name="cat_id">';
+        echo '</div>';
+        echo '<div class = "form-group">';
+        echo '<input class = "btn brn-primary" type="submit" name="submit_edit" value = "Edit category">';
+        echo '</div>';
     }
-    $row = findCategoriesById($cat_id, $pdo);
-    echo '<div class = "form-group">';
-    echo '<label for = "cat_title">Edit Category Title (id = '.$row["cat_id"].')</label>';
-    echo '<input class = "form-control" type="text" value = "'.$row["cat_title"].'" name="cat_title">';
-    echo '<input type="hidden" value = "'.$row['cat_id'].'" name="cat_id">';
-    echo '</div>';
-    echo '<div class = "form-group">';
-    echo '<input class = "btn brn-primary" type="submit" name="submit_edit" value = "Edit category">';
-    echo '</div>';
 }
 
-function showDeleteCategoryForm($cat_id, $pdo) { // showing the form to delete a category
-    if (!checkId($cat_id)) {
-        http_response_code(404);
-        exit();
+function showDeleteCategoryForm($cat_id) { // showing the form to delete a category
+    $category = findCategoriesById($cat_id);
+    if ($category !== false) {
+        echo '<div class = "form-group">';
+        echo '<label for "cat_title">Delete Category (id = '.$category["cat_id"].')</label>';
+        echo '<input type="hidden" value = "'.$category['cat_id'].'" name="cat_id">';
+        echo '</div>';
+        echo '<div class = "form-group">';
+        echo '<input class = "btn brn-primary" type="submit" name="submit_delete" value = "Delete category">';
+        echo '</div>';
     }
-    $row = findCategoriesById($cat_id, $pdo);
-    echo '<div class = "form-group">';
-    echo '<label for "cat_title">Delete Category (id = '.$row["cat_id"].')</label>';
-    echo '<input type="hidden" value = "'.$row['cat_id'].'" name="cat_id">';
-    echo '</div>';
-    echo '<div class = "form-group">';
-    echo '<input class = "btn brn-primary" type="submit" name="submit_delete" value = "Delete category">';
-    echo '</div>';
 
 }
 
 function showDeletePostForm($post_id) { // showing the form to delete a post
-    $row = findPostsById($post_id);
-    echo '<form action = "" method = "POST">';
-    echo '<div class = "form-group">';
-    echo '<label for "post_title">Delete Post (id = '.$row["post_id"].')</label>';
-    echo '<input type="hidden" value = "'.$row['post_id'].'" name="post_id">';
-    echo '</div>';
-    echo '<div class = "form-group">';
-    echo '<input class = "btn btn-primary" type="submit" name="submit_delete" value = "Delete post">';
-    echo '</div>';
-    echo '</form>';
+    $post = findPostsById($post_id);
+    if ($post !== false) {
+        echo '<form action = "" method = "POST">';
+        echo '<div class = "form-group">';
+        echo '<label for "post_title">Delete Post (id = '.$post["post_id"].')</label>';
+        echo '<input type="hidden" value = "'.$post['post_id'].'" name="post_id">';
+        echo '</div>';
+        echo '<div class = "form-group">';
+        echo '<input class = "btn btn-primary" type="submit" name="submit_delete" value = "Delete post">';
+        echo '</div>';
+        echo '</form>';
+    }
 }
 
 function showPost($row, $read_more = false) {
@@ -412,16 +403,12 @@ function deleteComment($com_id, $com_post_id, $pdo) { // deleting a comment
     }
 }
 
-function showApproveForm($com_id, $pdo) { // showing the form to approve comment
-    if (!checkId($com_id)) {
-        header("Location: comments.php");
-        exit();
-    }
-    $row = findCommentsById($com_id, $pdo);
+function showApproveForm($com_id) { // showing the form to approve comment
+    $comment = findCommentsById($com_id);
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
-    echo '<label for="post_title">Approve Comment (id = '.$row["comment_id"].')</label>';
-    echo '<input type="hidden" value="'.$row["comment_id"].'" name="comment_id">';
+    echo '<label for="post_title">Approve Comment (id = '.$comment["comment_id"].')</label>';
+    echo '<input type="hidden" value="'.$comment["comment_id"].'" name="comment_id">';
     echo '</div>';
     echo '<div class = "form-group">';
     echo '<input class = "btn btn-primary" type="submit" name="submit_approve" value = "Approve comment">';
@@ -442,16 +429,12 @@ function approveComment($com_id, $pdo) {
     }
 }
 
-function showUnapproveForm($com_id, $pdo) { // showing the form to unapprove comment
-    if (!checkId($com_id)) {
-        header("Location: comments.php");
-        exit();
-    }
-    $row = findCommentsById($com_id, $pdo);
+function showUnapproveForm($com_id) { // showing the form to unapprove comment
+    $comment = findCommentsById($com_id);
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
-    echo '<label for="post_title">Unapprove Comment (id = '.$row["comment_id"].')</label>';
-    echo '<input type="hidden" value="'.$row["comment_id"].'" name="comment_id">';
+    echo '<label for="post_title">Unapprove Comment (id = '.$comment["comment_id"].')</label>';
+    echo '<input type="hidden" value="'.$comment["comment_id"].'" name="comment_id">';
     echo '</div>';
     echo '<div class = "form-group">';
     echo '<input class = "btn btn-primary" type="submit" name="submit_unapprove" value = "Unapprove comment">';
@@ -488,12 +471,12 @@ function insertUser($values, $pdo) {
     }
 }
 
-function showDeleteUserForm($u_id, $pdo) {
+function showDeleteUserForm($u_id) {
     if (!checkId($u_id)) {
         header("Location: users.php");
         return;
     }
-    $row = findUsersById($u_id, $pdo);
+    $row = findUsersById($u_id);
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
     echo '<label for "user_title">Delete User (id = '.$row["user_id"].')</label>';
@@ -577,11 +560,9 @@ function checkUsersCookie($pdo) {
     }
 }
 
-function checkUserExistance($pdo, $username) {
-    $query = $pdo->prepare("SELECT * from users where username = :name");
-    $query->bindParam(":name", $username);
-    $query->execute();
-    $checkuser = $query->fetch(PDO::FETCH_LAZY);
+function checkUserExistance($username) {
+    $sql = "SELECT * from users where username = :name";
+    $checkuser = CrudUsersController::getInstance()->getRow($sql, ["name" => $username]);
     if ($checkuser) {
         $_SESSION["error"] = "Username is already taken, try another";
         return false;
