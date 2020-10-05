@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/helpers/functions.php";
 require_once __DIR__."/classes/MyAutoloader.php";
 use App\Classes\MyAutoloader;
 use App\Classes\Core;

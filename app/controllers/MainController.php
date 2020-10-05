@@ -8,10 +8,6 @@ class MainController extends Controller {
     }
 
     public function index($user = NULL) {
-        if (isset($_POST["search"])) {
-            header("Location: ".URL_ROOT."main/search/".$_POST["search"]);
-            exit();
-        }
         $data = $this->model->getData();
         $this->view("Main/index", $data);
     }

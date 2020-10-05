@@ -1,5 +1,8 @@
 <?php
-
+use App\Classes\CrudCommentsController;
+use App\Classes\CrudPostsController;
+use App\Classes\CrudCategoriesController;
+use App\Classes\CrudUsersController;
 /* Functions to show error and success messages */
 
 function showError() { // showing error messages
@@ -23,32 +26,28 @@ function showSuccess() { // showing success messages
 
 
 function findCategoriesById($cat_id, $pdo) {
-    $query = $pdo->prepare("SELECT category.*, count(cat_id) as 'count' from category where cat_id = :id");
-    $query->bindParam(":id", $cat_id);
-    $query->execute();
-    $row = $query->fetch(PDO::FETCH_LAZY);
-    if ($row["count"] == "0") {
+    $sql = "SELECT category.*, count(cat_id) as 'count' from category where cat_id = :id";
+    $category = CrudCategoriesController::getInstance()->getRow($sql, ["id" => $cat_id]);
+    if ($category["count"] == "0") {
         $_SESSION["error"] = "No category with such id!";
         header("categories.php");
         return false;
     }
     else {
-        return $row;
+        return $category;
     }
 }
 
-function findPostsById($p_id, $pdo) {
-    $query = $pdo->prepare("SELECT posts.*, count(post_id) as 'count' from posts where post_id = :id");
-    $query->bindParam(":id", $p_id);
-    $query->execute();
-    $row = $query->fetch(PDO::FETCH_LAZY);
-    if ($row["count"] == "0") {
+function findPostsById($p_id) {
+    $sql = "SELECT posts.*, count(post_id) as 'count' from posts where post_id = :id";
+    $post = CrudPostsController::getInstance()->getRow($sql, ["id" => $p_id]);
+    if ($post["count"] == "0") {
         $_SESSION["error"] = "No post with such id!";
         header("posts.php");
         return false;
     }
     else {
-        return $row;
+        return $post;
     }
 }
 
@@ -314,7 +313,7 @@ function showEditCategoryForm($cat_id, $pdo) { // showing the form to edit a cat
 
 function showDeleteCategoryForm($cat_id, $pdo) { // showing the form to delete a category
     if (!checkId($cat_id)) {
-        header("Location: categories.php");
+        http_response_code(404);
         exit();
     }
     $row = findCategoriesById($cat_id, $pdo);
@@ -328,12 +327,8 @@ function showDeleteCategoryForm($cat_id, $pdo) { // showing the form to delete a
 
 }
 
-function showDeletePostForm($post_id, $pdo) { // showing the form to delete a post
-    if(!checkId($post_id)) {
-        header("Location: posts.php");
-        exit();
-    }
-    $row = findPostsById($post_id, $pdo);
+function showDeletePostForm($post_id) { // showing the form to delete a post
+    $row = findPostsById($post_id);
     echo '<form action = "" method = "POST">';
     echo '<div class = "form-group">';
     echo '<label for "post_title">Delete Post (id = '.$row["post_id"].')</label>';

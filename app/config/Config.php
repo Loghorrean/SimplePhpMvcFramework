@@ -11,3 +11,5 @@ abstract class Config {
 define ('APP_ROOT', dirname(dirname(__FILE__)));
 //URL Root
 define('URL_ROOT', 'http://localhost/mvcframework');
+//Max file size to upload
+define ("MAX_FILE_SIZE", 5000000);

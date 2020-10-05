@@ -10,7 +10,7 @@
             <?php
             showPost($data["post"]);
             if ($data["editButton"]) {
-                echo '<a class="btn btn-primary" style="" href="'.URL_ROOT.'/admin/post/'.$data["post"]["post_id"].'?source=edit_post">Edit Post</a>';
+                echo '<a class="btn btn-primary" style="" href="'.URL_ROOT.'/admin/posts/'.$data["post"]["post_id"].'?source=edit_post">Edit Post</a>';
             }
             ?>
             <!-- Comments Form -->
