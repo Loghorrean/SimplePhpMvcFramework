@@ -143,148 +143,6 @@ function filterInput($value) {
 }
 
 
-/* Insert functions */
-
-
-function insertPost($values, $pdo) { // adding a post
-    foreach($values as &$v) {
-        $v = filterInput($v);
-    }
-    unset($v);
-    try {
-        $sql = "INSERT into posts (post_category_id, post_title, post_author_id, post_date, post_image, post_content, post_tags, post_status) ";
-        $sql .= "VALUES (:cat_id, :ttl, :auth_id, now(), :img, :cnt, :tag, :stat)";
-        $query = $pdo->prepare($sql);
-        $query->execute($values);
-        $query = NULL;
-        $_SESSION["success"] = "Post added!";
-        header("Location: posts.php");
-        exit();
-    } catch(PDOException $e) {
-        $_SESSION["error"] = "SQL exception: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
-
-function insertCategory(string $cat_title, $pdo) { // adding a category
-    try {
-        $query = $pdo->prepare("INSERT into category (cat_title) VALUES (:ttl)");
-        $query->bindParam(":ttl", $cat_title);
-        $query->execute();
-        $query = NULL;
-        $_SESSION["success"] = "New category inserted!";
-        header("Location: categories.php");
-        exit();
-    }   catch (PDOException $e) {
-        $_SESSION["error"] = "SQL exception: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
-
-/* Delete functions */
-
-
-function deleteCategory(int $cat_id, $pdo) { // deleting a category
-    try {
-        $query = $pdo->prepare("DELETE from category where cat_id = :id");
-        $query->bindParam(":id", $cat_id);
-        $query->execute();
-        $query = NULL;
-        $_SESSION["success"] = "Category deleted!";
-        header("Location: categories.php");
-        exit();
-    } catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
-function deletePost(int $p_id, $pdo) {
-    try {
-        $query = $pdo->prepare("DELETE from posts where post_id = :id");
-        $query->bindParam(":id", $p_id);
-        $query->execute();
-        $query = NULL;
-        return;
-    } catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
-
-/* Edit functions */
-
-
-function editCategory($values, $pdo) { // editing a category
-    foreach($values as &$v) {
-        $v = filterInput($v);
-    }
-    unset($v);
-    try {
-        $query = $pdo->prepare("UPDATE category SET cat_title = :ttl where category.cat_id = :id");
-        $query->execute($values);
-        $query = NULL;
-        $_SESSION["success"] = "Category successfully edited!";
-        header("Location: categories.php");
-        exit();
-    } catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
-function editPost(array $values, $pdo) { // editing a post
-    foreach ($values as &$v) {
-        $v = filterInput($v);
-    }
-    unset($v);
-    try {
-        $sql = "UPDATE posts SET post_category_id = :cat_id, post_title = :ttl, post_author_id = :auth, post_date = now(), ";
-        $sql .= "post_image = :img, post_content = :cnt, post_tags = :tgs, post_status = :stat ";
-        $sql .= "where post_id = :id";
-        $query = $pdo->prepare($sql);
-        $query->execute($values);
-        $query = NUll;
-        $_SESSION["success"] = "Post edited";
-        header("Location: posts.php");
-        exit();
-    } catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
-function editUser($values, $pdo, $path = "users.php") {
-    foreach($values as &$v) {
-        $v = filterInput($v);
-    }
-    unset($v);
-    try {
-        $sql = "UPDATE users SET username = :nam, user_firstname = :fname, user_lastname = :lname, ";
-        $sql .= "user_email = :mail, user_role = :role where user_id = :id";
-        $query = $pdo->prepare($sql);
-        $query->execute($values);
-        $query = NULL;
-        $_SESSION["success"] = "User edited";
-        header("Location: {$path}");
-        exit();
-    } catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
-
 /* Functions that create forms to confirm an action */
 
 
@@ -344,31 +202,6 @@ function showPost($row, $read_more = false) {
     }
 }
 
-function insertComment(array $values, $pdo) { // inserting a comment
-    foreach($values as &$v) {
-        $v = filterInput($v);
-    }
-    unset($v);
-    try {
-        $sql = "INSERT INTO comments (comment_post_id, comment_author_id, ";
-        $sql .= "comment_content, comment_status, comment_date";
-        $sql .= ") VALUES (:p_id, :auth_id, :cont, 'Unapproved', now())";
-        $query = $pdo->prepare($sql);
-        $query->execute($values);
-        $query = $pdo->prepare("UPDATE posts SET post_comment_count = post_comment_count + 1 where post_id = :p_id");
-        $query->bindParam("p_id", $values[":p_id"]);
-        $query->execute();
-        $_SESSION["success"] = "Comment is waiting to be approved!";
-        header("Location: post.php?p_id={$values[":p_id"]}");
-        exit();
-    }
-    catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
 function showDeleteCommentForm($com_id) { // showing a form to delete a comment
     $comment = findCommentsById($com_id);
     echo '<form action="" method = "POST">';
@@ -380,23 +213,6 @@ function showDeleteCommentForm($com_id) { // showing a form to delete a comment
     echo '<div class = "form-group">';
     echo '<input class = "btn btn-primary" type="submit" name="submit_delete" value = "Delete comment">';
     echo '</div>';
-}
-
-function deleteComment($com_id, $com_post_id, $pdo) { // deleting a comment
-    try {
-        $query = $pdo->prepare("DELETE from comments where comment_id = :id");
-        $query->execute(array(":id" => $com_id));
-        $query = $pdo->prepare("UPDATE posts SET post_comment_count = post_comment_count - 1 where post_id = :id");
-        $query->execute(array(":id" => $com_post_id));
-        $query = NULL;
-        $_SESSION["success"] = "Comment deleted!";
-        header("Location: comments.php");
-        exit();
-    } catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
 }
 
 function showApproveForm($com_id) { // showing the form to approve comment
@@ -411,20 +227,6 @@ function showApproveForm($com_id) { // showing the form to approve comment
     echo '</div>';
 }
 
-function approveComment($com_id, $pdo) {
-    try {
-        $query = $pdo->prepare("UPDATE comments set comment_status = 'Approved' where comment_id = :id");
-        $query->execute(array(":id" => $com_id));
-        $_SESSION["success"] = "Comment approved!";
-        header("Location: comments.php");
-        exit();
-    } catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
 function showUnapproveForm($com_id) { // showing the form to unapprove comment
     $comment = findCommentsById($com_id);
     echo '<form action="" method = "POST">';
@@ -435,36 +237,6 @@ function showUnapproveForm($com_id) { // showing the form to unapprove comment
     echo '<div class = "form-group">';
     echo '<input class = "btn btn-primary" type="submit" name="submit_unapprove" value = "Unapprove comment">';
     echo '</div>';
-}
-
-function unapproveComment($com_id, $pdo) {
-    try {
-        $query = $pdo->prepare("UPDATE comments set comment_status = 'Unapproved' where comment_id = :id");
-        $query->execute(array(":id" => $com_id));
-        $_SESSION["success"] = "Comment unapproved!";
-        header("Location: comments.php");
-        exit();
-    } catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
-function insertUser($values, $pdo) {
-    $sql = "INSERT into users (username, user_password, user_firstname, user_lastname, user_email, user_role, randSalt) ";
-    $sql .= "VALUES (:nm, :pwd, :fname, :lname, :mail, :role, :salt)";
-    try {
-        $query = $pdo->prepare($sql);
-        $query->execute($values);
-        $_SESSION["success"] = "User added";
-        header("Location: users.php");
-        exit();
-    } catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
 }
 
 function showDeleteUserForm($u_id) {
@@ -484,21 +256,6 @@ function showDeleteUserForm($u_id) {
     echo '</form>';
 }
 
-function deleteUser($u_id, $pdo) {
-    try {
-        $query = $pdo->prepare("DELETE from users where user_id = :id");
-        $query->execute(array(":id", $u_id));
-        $query = NULL;
-        $_SESSION["success"] = "User deleted";
-        header("Location: users.php");
-        exit();
-    } catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
 function generateSalt()
 {
     $salt = '';
@@ -507,35 +264,6 @@ function generateSalt()
         $salt .= chr(mt_rand(33,126));
     }
     return $salt;
-}
-
-function setPostStatus(string $post_status, int $p_id, $pdo) {
-    try {
-        $query = $pdo->prepare("UPDATE posts set post_status = :stat where post_id = :id");
-        $query->execute(array(":stat" => $post_status, ":id" => $p_id));
-        return true;
-    } catch (PDOException $e) {
-        $_SESSION["error"] = "Something went wrong: {$e->getMessage()}";
-        error_log($e->getMessage());
-        exit();
-    }
-}
-
-function showEditButton($pdo) {
-    if (isset($_SESSION["user_id"]) && isset($_GET["p_id"])) {
-        $stmt = $pdo->prepare("SELECT post_author_id from posts where post_id = :id");
-        $stmt->execute(array(":id" => $_GET["p_id"]));
-        $user = $stmt->fetch(PDO::FETCH_LAZY);
-        if ($_SESSION["user_id"] == $user["post_author_id"] || $_SESSION["user_role"] == "admin") {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    else {
-        return false;
-    }
 }
 
 function checkUsersCookie($pdo) {
