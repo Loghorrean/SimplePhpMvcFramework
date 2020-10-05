@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        Users <a href="?source=add_user" class="btn btn-primary">Add New</a>
+                        Comments
                     </h1>
                 </div>
                 <?php
@@ -50,13 +50,13 @@
                 </table>
                 <?php
                 if (isset($_GET["unapprove"])) {
-                    showUnapproveForm($_GET["unapprove"], $pdo);
+                    showUnapproveForm($_GET["unapprove"]);
                 }
                 if (isset($_GET["approve"])) {
-                    showApproveForm($_GET["approve"], $pdo);
+                    showApproveForm($_GET["approve"]);
                 }
                 if (isset($_GET["delete"])) {
-                    showDeleteCommentForm($_GET["delete"], $pdo);
+                    showDeleteCommentForm($_GET["delete"]);
                 }
                 ?>
             </div>

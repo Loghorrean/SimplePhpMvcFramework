@@ -369,17 +369,13 @@ function insertComment(array $values, $pdo) { // inserting a comment
     }
 }
 
-function showDeleteCommentForm($com_id, $pdo) { // showing a form to delete a comment
-    if (!checkId($com_id)) {
-        header("Location: comments.php");
-        exit();
-    }
-    $row = findCommentsById($com_id, $pdo);
+function showDeleteCommentForm($com_id) { // showing a form to delete a comment
+    $comment = findCommentsById($com_id);
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
-    echo '<label for="post_title">Delete Comment (id = '.$row["comment_id"].')</label>';
-    echo '<input type="hidden" value="'.$row["comment_id"].'" name="comment_id">';
-    echo '<input type="hidden" value="'.$row["comment_post_id"].'" name="comment_post_id">';
+    echo '<label for="post_title">Delete Comment (id = '.$comment["comment_id"].')</label>';
+    echo '<input type="hidden" value="'.$comment["comment_id"].'" name="comment_id">';
+    echo '<input type="hidden" value="'.$comment["comment_post_id"].'" name="comment_post_id">';
     echo '</div>';
     echo '<div class = "form-group">';
     echo '<input class = "btn btn-primary" type="submit" name="submit_delete" value = "Delete comment">';

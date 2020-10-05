@@ -147,6 +147,20 @@ class AdminModel implements Model {
             header("Location: /mvcframework/admin/comments");
             exit();
         }
+        if (isset($_POST["submit_approve"])) {
+            $sql = "UPDATE comments set comment_status = 'Approved' where comment_id = :id";
+            $this->comments->sql($sql, ["id" => $_POST["comment_id"]]);
+            $_SESSION["success"] = "Comment approved!";
+            header("Location: /mvcframework/admin/comments");
+            exit();
+        }
+        if (isset($_POST["submit_unapprove"])) {
+            $sql = "UPDATE comments set comment_status = 'Unapproved' where comment_id = :id";
+            $this->comments->sql($sql, ["id" => $_POST["comment_id"]]);
+            $_SESSION["success"] = "Comment unapproved!";
+            header("Location: /mvcframework/admin/comments");
+            exit();
+        }
         $data = array();
         $sql = "SELECT posts.post_title as 'post_title', users.username as 'username', users.user_email as 'user_email', comments.* from comments ";
         $sql .= "inner join posts on comments.comment_post_id = posts.post_id ";
