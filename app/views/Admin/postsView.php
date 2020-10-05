@@ -56,7 +56,7 @@
                     <td><?=htmlspecialchars($post["post_title"])?></td>
                     <td><?=htmlspecialchars($post_author)?></td>
                     <td><?=htmlspecialchars($post["post_date"])?></td>
-                    <td><img width = "150" src="../images/<?=$post["post_image"]?>" alt = "Image"></td>
+                    <td><img width = "150" src="/mvcframework/public/images/<?=$post["post_image"]?>" alt = "Image"></td>
                     <td><?=htmlspecialchars($post["post_content"])?></td>
                     <td><?=$post["post_tags"]?></td>
                     <td><?=$post["post_comment_count"]?></td>
