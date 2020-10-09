@@ -60,8 +60,7 @@ class MainModel implements Model {
         foreach($data["posts"] as &$post) {
             $post["post_content"] = (strlen($post["post_content"]) > 35) ? substr($post["post_content"], 0, 35) . "..." : $post["post_content"];
         }
-        $_SESSION["auth"] = false;
-        $_SESSION["user_id"] = 7; // THIS IS JUST FOR A TEST
+        $data["adminButton"] = false;
         if (isset($_SESSION["auth"])) {
             $data["users"] = $this->getUsers($_SESSION["user_id"]);
             $data["adminButton"] = $this->checkUserRights($data["users"]);

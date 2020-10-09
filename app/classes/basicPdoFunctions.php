@@ -9,7 +9,7 @@ trait basicPdoFunctions {
         return $this->pdo->query($sql);
     }
 
-    private function lastInsertId() {
+    public function lastInsertId() {
         return $this->pdo->lastInsertId();
     }
 

@@ -28,7 +28,7 @@
         <?php
         if (!isset($_SESSION["user_id"])) { ?>
             <div class = "form-group">
-                <h4>Don't have an account yet? - <a href = "registration.php">Make one!</a></h4>
+                <h4>Don't have an account yet? - <a href = "/mvcframework/users/registration">Make one!</a></h4>
             </div>
         <?php } ?>
         <!-- /.input-group -->

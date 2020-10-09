@@ -4,6 +4,10 @@
     <div class="row">
         <!-- Blog Entries Column -->
         <div class="col-md-8">
+            <?php
+            showSuccess();
+            showError();
+            ?>
             <h1 class="page-header">
                 Main Page
             </h1>

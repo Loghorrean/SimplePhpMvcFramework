@@ -4,16 +4,9 @@ use App\Classes\Controller;
 class AdminController extends Controller {
     public function __construct() {
         session_start();
-        $_SESSION["auth"] = true;
-        $_SESSION["user_role"] = "admin";
-        if (isset($_SESSION["auth"])) {
-            if ($_SESSION["user_role"] !== "admin") {
-                header("Location: ".URL_ROOT);
-                exit();
-            }
-        }
-        else {
-            header("Location: ".URL_ROOT);
+        if ($_SESSION["user_role"] !== "Admin") {
+            $_SESSION["error"] = "You do not have permission to come here";
+            header("Location: /mvcframework");
             exit();
         }
         $this->model = $this->model("AdminModel");
