@@ -1,12 +1,9 @@
 <div class="col-md-4">
     <!-- Blog Search Well -->
+    <?php if (!isset($_SESSION["auth"])) { ?>
     <div class="well">
         <h4>Log In Form</h4>
-        <?php
-        showError();
-        showSuccess();
-        ?>
-        <form action="includes/login.php" method="POST">
+        <form action="" method="POST">
             <div class="form-group">
                 <input type="text" name = "username" class="form-control" placeholder="Enter username">
             </div>
@@ -33,6 +30,7 @@
         <?php } ?>
         <!-- /.input-group -->
     </div>
+    <?php } ?>
 
 
     <div class="well">

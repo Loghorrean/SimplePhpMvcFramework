@@ -22,6 +22,19 @@
                 }
                 ?>
             </ul>
+            <?php if (isset($_SESSION["auth"])) { ?>
+                <ul class = "nav navbar-right navbar-nav">
+                    <li>
+                        <a href = "/mvcframework/main/author/<?=$_SESSION["username"]?>"><?=$_SESSION["username"]?></a>
+                    </li>
+                    <li>
+                        <form></form>
+                        <?php
+                        // TODO: implement the logout here
+                        ?>
+                    </li>
+                </ul>
+            <?php } ?>
         </div>
         <!-- /.navbar-collapse -->
     </div>

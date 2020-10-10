@@ -7,6 +7,7 @@
             <?php
             showSuccess();
             showError();
+            var_dump($_SESSION);
             ?>
             <h1 class="page-header">
                 Main Page

@@ -13,10 +13,6 @@ class AdminController extends Controller {
     }
 
     public function index() {
-        $_SESSION["auth"] = true;
-        $_SESSION["username"] = "Loghorrean";
-        $_SESSION["user_role"] = "admin";
-        $_SESSION["user_id"] = 7;
         $data = $this->model->getData();
         $this->view("Admin/index", $data);
     }
