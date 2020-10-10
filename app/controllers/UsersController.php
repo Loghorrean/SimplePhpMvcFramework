@@ -70,6 +70,45 @@ class UsersController extends Controller {
     }
 
     public function login() {
+        if (isset($_POST["submitLog"])) {
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $data = [
+                "name" => filterInput($_POST["username"]),
+                "password" => filterInput($_POST["password"]),
+                "name_error" => "",
+                "password_error" => "",
+            ];
+            if (empty($data["name"])) {
+                $data["name_error"] = "This field must be filled";
+            } elseif(!$this->model->checkIfUserExists($data["name"])) {
+                $data["password_error"] = "Wrong username/password";
+            }
 
+            if (empty($data["password"])) {
+                $data["password_error"] = "This field must be filled";
+            }
+
+            if (empty($data["name_error"]) && empty($data["password_error"])) {
+                if(!$this->model->checkIfPasswordMatch($data["name"], $data["password"])) {
+                    $data["password_error"] = "Wrong username/password!";
+                } else {
+                    if ($this->model->login($data)) {
+                        header("Location: ".URL_ROOT);
+                    } else {
+                        die("Error");
+                    }
+                }
+            }
+
+            $this->view('Users/login', $data);
+        } else {
+            $data = [
+                "name" => "",
+                "name_error" => "",
+                "password" => "",
+                "password_error" => "",
+            ];
+            $this->view('Users/login', $data);
+        }
     }
 }

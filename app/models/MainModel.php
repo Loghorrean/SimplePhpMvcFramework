@@ -133,7 +133,7 @@ class MainModel implements Model {
 
     private function checkUserRights($user) {
         $user_role = $user["user_role"];
-        if ($user_role == "admin") {
+        if ($user_role === "Admin") {
             return true;
         }
         else {
