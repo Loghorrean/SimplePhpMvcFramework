@@ -9,12 +9,12 @@ class AdminController extends Controller {
             header("Location: /mvcframework");
             exit();
         }
-        $this->model = $this->model("AdminModel");
+        $this->model = $this->getModel("AdminModel");
     }
 
     public function index() {
         $data = $this->model->getData();
-        $this->view("Admin/index", $data);
+        $this->getView("Admin/index", $data);
     }
 
     public function categories() {
@@ -27,7 +27,7 @@ class AdminController extends Controller {
             exit();
         }
         $data = $this->model->getCategoriesPage();
-        $this->view("Admin/categories", $data);
+        $this->getView("Admin/categories", $data);
     }
 
     public function posts($post_id = null) {
@@ -45,7 +45,7 @@ class AdminController extends Controller {
         switch($source) {
             case "add_post":
                 $data = $this->model->getAddPostsPage();
-                $this->view("Admin/postsAdd", $data);
+                $this->getView("Admin/postsAdd", $data);
                 break;
             case "edit_post" :
 //                TODO: implement the edit_post function
@@ -55,11 +55,11 @@ class AdminController extends Controller {
                     exit();
                 }
                 $data = $this->model->getEditPostPage();
-                $this->view("Admin/postsEdit", $data);
+                $this->getView("Admin/postsEdit", $data);
                 break;
             default:
                 $data = $this->model->getPostsPage();
-                $this->view("Admin/posts", $data);
+                $this->getView("Admin/posts", $data);
         }
     }
 
@@ -78,14 +78,14 @@ class AdminController extends Controller {
         switch ($source) {
             case "add_user":
                 $data = $this->model->getAddUsersPage();
-                $this->view("Admin/usersAdd", $data);
+                $this->getView("Admin/usersAdd", $data);
                 break;
             case "edit_user":
                 //TODO: implement the edit_user function
                 break;
             default:
                 $data = $this->model->getUsersPage();
-                $this->view("Admin/users", $data);
+                $this->getView("Admin/users", $data);
         }
     }
 
@@ -106,6 +106,6 @@ class AdminController extends Controller {
             exit();
         }
         $data = $this->model->getCommentsPage();
-        $this->view("Admin/comments", $data);
+        $this->getView("Admin/comments", $data);
     }
 }

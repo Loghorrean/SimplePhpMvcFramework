@@ -4,21 +4,20 @@ use App\Classes\Controller;
 class MainController extends Controller {
     public function __construct() {
         session_start();
-        $this->model = $this->model('MainModel');
+        $this->model = $this->getModel('MainModel');
     }
 
-    public function index($user = NULL) {
+    public function index() {
         $data = $this->model->getData();
-        $this->view("Main/index", $data);
+        $this->getView("Main/index", $data);
     }
 
     public function cat($cat_title = NULL) {
         if (isset($cat_title)) {
             $cat_title = (string)$cat_title;
             $data = $this->model->getCatPage($cat_title);
-            $this->view("Main/cat", $data);
-        }
-        else {
+            $this->getView("Main/cat", $data);
+        } else {
             header("Location: ".URL_ROOT);
             exit();
         }
@@ -28,9 +27,8 @@ class MainController extends Controller {
         if (isset($_POST["search"]) && $_POST["search"] != NULL) {
             $tag = (string)$_POST["search"];
             $data = $this->model->getSearchPage($tag);
-            $this->view("Main/search", $data);
-        }
-        else {
+            $this->getView("Main/search", $data);
+        } else {
             header("Location: ".URL_ROOT);
             exit();
         }
@@ -40,9 +38,8 @@ class MainController extends Controller {
         if (isset($post_id)) {
             $post_id = (int)$post_id;
             $data = $this->model->getPostPage($post_id);
-            $this->view("Main/post", $data);
-        }
-        else {
+            $this->getView("Main/post", $data);
+        } else {
             header("Location: ".URL_ROOT);
             exit();
         }

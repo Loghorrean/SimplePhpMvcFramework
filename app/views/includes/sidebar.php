@@ -3,31 +3,28 @@
     <?php if (!isset($_SESSION["auth"])) { ?>
     <div class="well">
         <h4>Log In Form</h4>
-        <form action="" method="POST">
+        <form action="/mvcframework/users/login" method="POST">
             <div class="form-group">
                 <input type="text" name = "username" class="form-control" placeholder="Enter username">
             </div>
             <div class="input-group">
                 <input type="password" name = "password" class="form-control" placeholder="Enter password">
                 <span class = "input-group-btn">
-                            <button class="btn btn-primary" name="login" type="submit">Submit</button>
-                        </span>
-                <?php if (isset($_SESSION["user_id"])) { ?>
+                    <button class="btn btn-primary" name="submitLog" type="submit">Submit</button>
+                </span>
+                <?php if (isset($_SESSION["auth"])) { ?>
                     <span class = "input-group-btn">
-                                <button class="btn btn-primary" name="logout" type="submit">Logout</button>
-                            </span>
+                        <button class="btn btn-primary" name="logout" type="submit">Logout</button>
+                    </span>
                 <?php } ?>
             </div>
             <div class = "input-group">
                 <input type="checkbox" name="remember" value="1"> Remember me
             </div>
         </form>
-        <?php
-        if (!isset($_SESSION["user_id"])) { ?>
             <div class = "form-group">
                 <h4>Don't have an account yet? - <a href = "/mvcframework/users/registration">Make one!</a></h4>
             </div>
-        <?php } ?>
         <!-- /.input-group -->
     </div>
     <?php } ?>

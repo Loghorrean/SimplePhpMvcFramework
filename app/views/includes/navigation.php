@@ -17,7 +17,7 @@
                 foreach ($data["categories"] as $category) {
                     echo "<li><a href = '".URL_ROOT."/main/cat/{$category["cat_title"]}'>{$category["cat_title"]}</a></li>";
                 }
-                if ($data["adminButton"]) {
+                if ($data["isAdmin"]) {
                     echo "<li style = 'font-weight: bold;'><a style = 'color: red;' href = '".URL_ROOT."/admin'>Admin</a></li>";
                 }
                 ?>
@@ -28,10 +28,7 @@
                         <a href = "/mvcframework/main/author/<?=$_SESSION["username"]?>"><?=$_SESSION["username"]?></a>
                     </li>
                     <li>
-                        <form></form>
-                        <?php
-                        // TODO: implement the logout here
-                        ?>
+                        <a href = "/mvcframework/users/logout">Logout</a>
                     </li>
                 </ul>
             <?php } ?>

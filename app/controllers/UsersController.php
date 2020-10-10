@@ -4,7 +4,7 @@ use App\Classes\Controller;
 class UsersController extends Controller {
     public function __construct() {
         session_start();
-        $this->model = $this->model("UsersModel");
+        $this->model = $this->getModel("UsersModel");
     }
     public function registration() {
         if (isset($_POST["submitReg"])) {
@@ -52,7 +52,7 @@ class UsersController extends Controller {
                     die("Error");
                 }
             }
-            $this->view('Users/registration', $data);
+            $this->getView('Users/registration', $data);
         }
         else {
             $data = [
@@ -65,11 +65,16 @@ class UsersController extends Controller {
                 "verify_password" => "",
                 "verify_password_error" => "",
             ];
-            $this->view('Users/registration', $data);
+            $this->getView('Users/registration', $data);
         }
     }
 
     public function login() {
+        if (isset($_SESSION["auth"])) {
+            $_SESSION["error"] = "You are already logged in";
+            header("Location: ".URL_ROOT);
+            exit();
+        }
         if (isset($_POST["submitLog"])) {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $data = [
@@ -100,7 +105,7 @@ class UsersController extends Controller {
                 }
             }
 
-            $this->view('Users/login', $data);
+            $this->getView('Users/login', $data);
         } else {
             $data = [
                 "name" => "",
@@ -108,7 +113,12 @@ class UsersController extends Controller {
                 "password" => "",
                 "password_error" => "",
             ];
-            $this->view('Users/login', $data);
+            $this->getView('Users/login', $data);
         }
+    }
+
+    public function logout() {
+        session_destroy();
+        header("Location: ".URL_ROOT);
     }
 }

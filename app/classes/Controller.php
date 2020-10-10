@@ -7,14 +7,14 @@ abstract class Controller {
 
     //Requiring a model by name
 
-    public function model($model) {
+    public function getModel($model) {
         $model = "App\\Models\\".$model;
         return new $model;
     }
 
     //Requiring a view by name and passing it data if needed
 
-    public function view($view, $data = []) {
+    public function getView($view, $data = []) {
         $view .= "View";
         if (file_exists(__DIR__."/../views/".$view.".php")) {
             require_once __DIR__."/../views/".$view.".php";
