@@ -41,9 +41,9 @@
                             <td><a href="/mvcframework/main/post/<?=$comment["comment_post_id"]?>"><?=htmlspecialchars($comment["post_title"])?></a></td>
                             <td><?=htmlspecialchars($comment["comment_status"])?></td>
                             <td><?=htmlspecialchars($comment["comment_date"])?></td>
-                            <td><a href="/mvcframework/admin/comments?approve=<?=$comment["comment_id"]?>">Approve</a></td>
-                            <td><a href="/mvcframework/admin/comments?unapprove=<?=$comment["comment_id"]?>">Unapprove</a></td>
-                            <td><a href="/mvcframework/admin/comments?delete=<?=$comment["comment_id"]?>">Delete</a></td>
+                            <td><a href="<?=URL_ROOT?>/admin/comments?approve=<?=$comment["comment_id"]?>">Approve</a></td>
+                            <td><a href="<?=URL_ROOT?>/admin/comments?unapprove=<?=$comment["comment_id"]?>">Unapprove</a></td>
+                            <td><a href="<?=URL_ROOT?>/admin/comments?delete=<?=$comment["comment_id"]?>">Delete</a></td>
                         </tr>
                     <?php } ?>
                     </tbody>

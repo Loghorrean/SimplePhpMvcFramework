@@ -56,15 +56,15 @@
                     <td><?=htmlspecialchars($post["post_title"])?></td>
                     <td><?=htmlspecialchars($post_author)?></td>
                     <td><?=htmlspecialchars($post["post_date"])?></td>
-                    <td><img width = "150" src="/mvcframework/public/images/<?=$post["post_image"]?>" alt = "Image"></td>
+                    <td><img width = "150" src="<?=URL_ROOT?>/public/images/<?=$post["post_image"]?>" alt = "Image"></td>
                     <td><?=htmlspecialchars($post["post_content"])?></td>
                     <td><?=$post["post_tags"]?></td>
                     <td><?=$post["post_comment_count"]?></td>
                     <td><?=$post["post_status"]?></td>
                     <td><?=$post["view_count"]?></td>
-                    <td><button class = "btn"><a href="/mvcframework/main/post/<?=$post["post_id"]?>">View</a></button></td>
-                    <td><button class = "btn"><a href="/mvcframework/admin/posts?delete=<?=$post["post_id"]?>">Delete</a></button></td>
-                    <td><button class = "btn"><a href="/mvcframework/admin/posts/<?=$post["post_id"]?>?source=edit_post">Edit</a></button></td>
+                    <td><button class = "btn"><a href="<?=URL_ROOT?>/main/post/<?=$post["post_id"]?>">View</a></button></td>
+                    <td><button class = "btn"><a href="<?=URL_ROOT?>/admin/posts?delete=<?=$post["post_id"]?>">Delete</a></button></td>
+                    <td><button class = "btn"><a href="<?=URL_ROOT?>/admin/posts/<?=$post["post_id"]?>?source=edit_post">Edit</a></button></td>
                 </tr>
             <?php } ?>
             </tbody>

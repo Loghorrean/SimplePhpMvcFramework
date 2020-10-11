@@ -51,8 +51,8 @@
                                 <tr>
                                     <td><?=$category["cat_id"]?></td>
                                     <td><?=$category["cat_title"]?></td>
-                                    <td><a href="/mvcframework/admin/categories?delete=<?=$category['cat_id']?>">Delete</a></td>
-                                    <td><a href="/mvcframework/admin/categories?edit=<?=$category['cat_id']?>">Edit</a></td>
+                                    <td><a href="<?=URL_ROOT?>/admin/categories?delete=<?=$category['cat_id']?>">Delete</a></td>
+                                    <td><a href="<?=URL_ROOT?>/admin/categories?edit=<?=$category['cat_id']?>">Edit</a></td>
                                 </tr>
                                 <?php } ?>
                             </tbody>

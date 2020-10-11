@@ -3,7 +3,7 @@
     <?php if (!isset($_SESSION["auth"])) { ?>
     <div class="well">
         <h4>Log In Form</h4>
-        <form action="/mvcframework/users/login" method="POST">
+        <form action="<?=URL_ROOT?>/users/login" method="POST">
             <div class="form-group">
                 <input type="text" name = "username" class="form-control" placeholder="Enter username">
             </div>
@@ -18,14 +18,14 @@
             </div>
         </form>
             <div class = "form-group">
-                <h4>Don't have an account yet? - <a href = "/mvcframework/users/registration">Make one!</a></h4>
+                <h4>Don't have an account yet? - <a href = "<?=URL_ROOT?>/users/registration">Make one!</a></h4>
             </div>
         <!-- /.input-group -->
     </div>
     <?php } ?>
     <div class="well">
         <h4>Blog Search</h4>
-        <form action="/mvcframework/main/search" method="POST">
+        <form action="<?=URL_ROOT?>/main/search" method="POST">
             <div class="input-group">
                 <input type="text" name = "search" class="form-control">
                 <span class="input-group-btn">

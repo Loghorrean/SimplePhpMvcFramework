@@ -11,7 +11,7 @@
     </div>
     <!-- Top Menu Items -->
     <ul class="nav navbar-right top-nav">
-        <li><a href="/mvcframework">Main Page</a></li>
+        <li><a href="<?=URL_ROOT?>">Main Page</a></li>
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i><?=$_SESSION["username"]?><b class="caret"></b></a>
             <ul class="dropdown-menu">
@@ -29,22 +29,22 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
             <li>
-                <a href="/mvcframework/admin"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
+                <a href="<?=URL_ROOT?>/admin"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
             </li>
             <li>
-                <a href="/mvcframework/admin/posts"><i class="fa fa-fw fa-dashboard"></i>View post</a>
+                <a href="<?=URL_ROOT?>/admin/posts"><i class="fa fa-fw fa-dashboard"></i>View post</a>
             </li>
             <li>
-                <a href="/mvcframework/admin/categories"><i class="fa fa-fw fa-wrench"></i> Categories page</a>
+                <a href="<?=URL_ROOT?>/admin/categories"><i class="fa fa-fw fa-wrench"></i> Categories page</a>
             </li>
             <li>
-                <a href="/mvcframework/admin/users"><i class="fa fa-fw fa-file"></i> Users</a>
+                <a href="<?=URL_ROOT?>/admin/users"><i class="fa fa-fw fa-file"></i> Users</a>
             </li>
             <li>
-                <a href="/mvcframework/admin/comments"><i class="fa fa-fw fa-file"></i> Comments</a>
+                <a href="<?=URL_ROOT?>/admin/comments"><i class="fa fa-fw fa-file"></i> Comments</a>
             </li>
             <li>
-                <a href="/mvcframework/main/author/<?=$_SESSION["username"]?>"><i class="fa fa-fw fa-wrench"></i> Profile</a>
+                <a href="<?=URL_ROOT?>/main/author/<?=$_SESSION["username"]?>"><i class="fa fa-fw fa-wrench"></i> Profile</a>
             </li>
         </ul>
     </div>

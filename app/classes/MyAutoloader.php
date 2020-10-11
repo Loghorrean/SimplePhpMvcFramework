@@ -3,29 +3,26 @@ namespace App\Classes;
 class MyAutoloader {
     public static function Classloader($classname) {
         $prefix = "App\\Classes\\";
-        $base_dir = __DIR__;
+        $base_dir = APP_ROOT."/classes";
         MyAutoloader::Loader($prefix, $base_dir, $classname);
-        return;
     }
 
     public static function ControllerLoader($classname) {
         $prefix = "App\\Controllers\\";
-        $base_dir = __DIR__."/../controllers";
+        $base_dir = APP_ROOT."/controllers";
         MyAutoloader::Loader($prefix, $base_dir, $classname);
-        return;
     }
 
     public static function ConfigLoader($classname) {
         $prefix = "App\\Config\\";
-        $base_dir = __DIR__."/../config";
+        $base_dir = APP_ROOT."/config";
         MyAutoloader::Loader($prefix, $base_dir, $classname);
-        return;
     }
+
     public static function ModelLoader($classname) {
         $prefix = "App\\Models\\";
-        $base_dir = __DIR__."/../models";
+        $base_dir = APP_ROOT."/models";
         MyAutoloader::Loader($prefix, $base_dir, $classname);
-        return;
     }
 
     private static function Loader($prefix, $base_dir, $classname) {

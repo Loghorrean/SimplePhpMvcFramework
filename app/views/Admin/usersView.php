@@ -40,8 +40,8 @@
                             <td><?=htmlspecialchars($user["user_email"])?></td>
                             <td><?=htmlspecialchars($user["user_image"])?></td>
                             <td><?=htmlspecialchars($user["user_role"])?></td>
-                            <td><a href="/mvcframework/admin/users?delete=<?=$user["user_id"]?>">Delete</a></td>
-                            <td><a href="/mvcframework/admin/users/<?=$user["user_id"]?>?source=edit_user">Edit</a></td>
+                            <td><a href="<?=URL_ROOT?>/admin/users?delete=<?=$user["user_id"]?>">Delete</a></td>
+                            <td><a href="<?=URL_ROOT?>/admin/users/<?=$user["user_id"]?>?source=edit_user">Edit</a></td>
                         </tr>
                     <?php } ?>
                     </tbody>

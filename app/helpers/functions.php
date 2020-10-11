@@ -1,8 +1,4 @@
 <?php
-use App\Classes\CrudCommentsController;
-use App\Classes\CrudPostsController;
-use App\Classes\CrudCategoriesController;
-use App\Classes\CrudUsersController;
 /* Functions to show error and success messages */
 
 function showError() { // showing error messages
@@ -17,60 +13,6 @@ function showSuccess() { // showing success messages
     if (isset($_SESSION["success"])) {
         echo '<p class="text-success">'.$_SESSION["success"].'</p>';
         unset($_SESSION["success"]);
-    }
-}
-
-
-/* Functions to find an object in the database, returns false if the object is absent or pdo object otherwise */
-
-
-
-function findCategoriesById($cat_id) {
-    $sql = "SELECT category.*, count(cat_id) as 'count' from category where cat_id = :id";
-    $category = CrudCategoriesController::getInstance()->getRow($sql, ["id" => $cat_id]);
-    if ($category["count"] == "0") {
-        $_SESSION["error"] = "No category with such id!";
-        return false;
-    }
-    else {
-        return $category;
-    }
-}
-
-function findPostsById($p_id) {
-    $sql = "SELECT posts.*, count(post_id) as 'count' from posts where post_id = :id";
-    $post = CrudPostsController::getInstance()->getRow($sql, ["id" => $p_id]);
-    if ($post["count"] == "0") {
-        $_SESSION["error"] = "No post with such id!";
-        return false;
-    }
-    else {
-        return $post;
-    }
-}
-
-function findCommentsById($com_id) {
-    $sql = "SELECT comments.*, count(comment_id) as 'count' from comments where comment_id = :id";
-    $comment = CrudCommentsController::getInstance()->getRow($sql, ["id" => $com_id]);
-    if ($comment["count"] == "0") {
-        $_SESSION["error"] = "No comment with such id!";
-        header("Location: comments.php");
-        return false;
-    }
-    else {
-        return $comment;
-    }
-}
-
-function findUsersById($u_id) {
-    $sql = "SELECT users.*, count(user_id) as 'count' from users where user_id = :id";
-    $user = CrudUsersController::getInstance()->getRow($sql, ["id" => $u_id]);
-    if ($user["count"] == "0") {
-        $_SESSION["error"] = "No user with such id!";
-        return false;
-    }
-    else {
-        return $user;
     }
 }
 
@@ -169,8 +111,6 @@ function showDeleteCategoryForm($cat_id) { // showing the form to delete a categ
 }
 
 function showDeletePostForm($post_id) { // showing the form to delete a post
-    $post = findPostsById($post_id);
-    if ($post !== false) {
         echo '<form action = "" method = "POST">';
         echo '<div class = "form-group">';
         echo '<label for "post_title">Delete Post (id = '.$post["post_id"].')</label>';
@@ -180,14 +120,13 @@ function showDeletePostForm($post_id) { // showing the form to delete a post
         echo '<input class = "btn btn-primary" type="submit" name="submit_delete" value = "Delete post">';
         echo '</div>';
         echo '</form>';
-    }
 }
 
 function showPost($row, $read_more = false) {
-    echo '<h2><a href="/mvcframework/main/post/'.$row["post_id"].'">' . htmlspecialchars($row["post_title"]) . '</a></h2>';
-    echo '<p class = "lead">by <a href="/mvcframework/main/author/'.$row["username"].'">' . htmlspecialchars($row["username"]) . '</a></p><hr>';
+    echo '<h2><a href="' . URL_ROOT . '/main/post/'.$row["post_id"].'">' . htmlspecialchars($row["post_title"]) . '</a></h2>';
+    echo '<p class = "lead">by <a href="' . URL_ROOT . '/main/author/'.$row["username"].'">' . htmlspecialchars($row["username"]) . '</a></p><hr>';
     echo '<p><span class="glyphicon glyphicon-time"></span> Posted on ' . htmlspecialchars($row["post_date"]) . '</p><hr>';
-    echo '<a href="/mvcframework/main/post/'.$row["post_id"].'"><img class="img-responsive" src="'.URL_ROOT.'/public/images/'. $row["post_image"] . '" alt="Loading..."></a><hr>';
+    echo '<a href="' . URL_ROOT . '/main/post/'.$row["post_id"].'"><img class="img-responsive" src="'.URL_ROOT.'/public/images/'. $row["post_image"] . '" alt="Loading..."></a><hr>';
     echo '<p style="font-weight: 700">' . $row["post_content"] . '</p>';
     if ($read_more) {
         echo '<a class="btn btn-primary" href="post.php?p_id='.$row["post_id"].'">Read More ';
@@ -197,7 +136,6 @@ function showPost($row, $read_more = false) {
 }
 
 function showDeleteCommentForm($com_id) { // showing a form to delete a comment
-    $comment = findCommentsById($com_id);
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
     echo '<label for="post_title">Delete Comment (id = '.$comment["comment_id"].')</label>';
@@ -210,7 +148,6 @@ function showDeleteCommentForm($com_id) { // showing a form to delete a comment
 }
 
 function showApproveForm($com_id) { // showing the form to approve comment
-    $comment = findCommentsById($com_id);
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
     echo '<label for="post_title">Approve Comment (id = '.$comment["comment_id"].')</label>';
@@ -222,7 +159,6 @@ function showApproveForm($com_id) { // showing the form to approve comment
 }
 
 function showUnapproveForm($com_id) { // showing the form to unapprove comment
-    $comment = findCommentsById($com_id);
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
     echo '<label for="post_title">Unapprove Comment (id = '.$comment["comment_id"].')</label>';
@@ -234,11 +170,6 @@ function showUnapproveForm($com_id) { // showing the form to unapprove comment
 }
 
 function showDeleteUserForm($u_id) {
-    if (!checkId($u_id)) {
-        header("Location: users.php");
-        return;
-    }
-    $row = findUsersById($u_id);
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
     echo '<label for "user_title">Delete User (id = '.$row["user_id"].')</label>';
@@ -276,31 +207,6 @@ function checkUsersCookie($pdo) {
             }
         }
     }
-}
-
-function checkUserExistance($username) {
-    $sql = "SELECT * from users where username = :name";
-    $checkuser = CrudUsersController::getInstance()->getRow($sql, ["name" => $username]);
-    if ($checkuser) {
-        $_SESSION["error"] = "Username is already taken, try another";
-        return false;
-    } else {
-        return true;
-    }
-}
-
-function registerUser($pdo, $values) {
-    $username = $values[":name"];
-    $sql = "INSERT into users (username, user_password, user_email, user_role, randSalt) ";
-    $sql .= "VALUES (:name, :pass, :mail, 'subscriber', :salt)";
-    $query = $pdo->prepare($sql);
-    $query->execute($values);
-    $query = NULL;
-    $_SESSION["success"] = "Successful registration";
-    $_SESSION["user_id"] = $pdo->lastInsertId();
-    $_SESSION["user_role"] = "subscriber";
-    $_SESSION["name"] = $username;
-    return true;
 }
 
 function checkFileSize(int $fileSize, int $maxSize) {

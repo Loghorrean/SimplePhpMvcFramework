@@ -6,7 +6,7 @@ class AdminController extends Controller {
         session_start();
         if ($_SESSION["user_role"] !== "Admin") {
             $_SESSION["error"] = "You do not have permission to come here";
-            header("Location: /mvcframework");
+            header("Location: ".URL_ROOT);
             exit();
         }
         $this->model = $this->getModel("AdminModel");
@@ -52,7 +52,7 @@ class AdminController extends Controller {
 
         if (isset($_POST["submit_delete"])) {
             if ($this->model->deleteCategory($_POST["cat_id_delete"])) {
-                header("Location: /mvcframework/admin/categories");
+                header("Location: " . URL_ROOT . "/admin/categories");
                 exit();
             }
             else {
@@ -71,7 +71,7 @@ class AdminController extends Controller {
 
             if (empty($data["cat_title_edit_error"])) {
                 if ($this->model->editCategory($_POST["cat_id_edit"], $data["cat_title_edit"])) {
-                    header("Location: /mvcframework/admin/categories");
+                    header("Location: " . URL_ROOT . "/admin/categories");
                     exit();
                 }
                 else {
@@ -85,7 +85,7 @@ class AdminController extends Controller {
     public function posts($post_id = null) {
         if (isset($_GET["delete"]) && !checkId($_GET["delete"])) {
             $_SESSION["error"] = "Wrong delete id!";
-            header("Location: /mvcframework/admin/posts");
+            header("Location: " . URL_ROOT . "/admin/posts");
             exit();
         }
         $source = "";
@@ -101,7 +101,7 @@ class AdminController extends Controller {
 //                TODO: implement the edit_post function
                 if ($post_id === NULL) {
                     $_SESSION["error"] = "Wrong edit id!";
-                    header("Location: /mvcframework/admin/posts");
+                    header("Location: " . URL_ROOT . "/admin/posts");
                     exit();
                 }
                 $data = $this->model->getEditPostPage();
@@ -116,7 +116,7 @@ class AdminController extends Controller {
     public function users() {
         if (isset($_GET["delete"]) && !checkId($_GET["delete"])) {
             $_SESSION["error"] = "Wrong delete id!";
-            header("Location: /mvcframework/admin/users");
+            header("Location: " . URL_ROOT . "/admin/users");
             exit();
         }
         $source = "";
@@ -140,12 +140,12 @@ class AdminController extends Controller {
     public function comments() {
         if (isset($_GET["delete"]) && !checkId($_GET["delete"])) {
             $_SESSION["Wrong delete id!"];
-            header("Location: /mvcframework/admin/comments");
+            header("Location: " . URL_ROOT . "/admin/comments");
             exit();
         }
         if (isset($_GET["approve"]) && !checkId($_GET["approve"])) {
             $_SESSION["Wrong id to approve"];
-            header("Location: /mvcframework/admin/comments");
+            header("Location: " . URL_ROOT . "/admin/comments");
             exit();
         }
         if (isset($_GET["unapprove"]) && !checkId($_GET["unapprove"])) {

@@ -106,7 +106,7 @@ class MainModel implements Model {
             $this->comments->Insert(["post_id" => $post_id, "auth_id" => $_SESSION["user_id"],
                 "cont" => $_POST["comment_content"], "stat" => 'Unapproved']);
             $_SESSION["success"] = "Comment is waiting to be approved!";
-            header("Location: /mvcframework/main/post/".$post_id);
+            header("Location: " . URL_ROOT . "/main/post/".$post_id);
             exit();
         }
         $data = array();
