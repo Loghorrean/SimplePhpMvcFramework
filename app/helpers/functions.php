@@ -146,32 +146,26 @@ function filterInput($value) {
 /* Functions that create forms to confirm an action */
 
 
-function showEditCategoryForm($cat_id) { // showing the form to edit a category
-    $category = findCategoriesById($cat_id);
-    if ($category !== false) {
+function showEditCategoryForm($cat_id, $cat_title, $error) { // showing the form to edit a category
         echo '<div class = "form-group">';
-        echo '<label for = "cat_title">Edit Category Title (id = '.$category["cat_id"].')</label>';
-        echo '<input class = "form-control" type="text" value = "'.$category["cat_title"].'" name="cat_title">';
-        echo '<input type="hidden" value = "'.$category['cat_id'].'" name="cat_id">';
+        echo '<label for = "cat_title_edit">Edit Category Title (id = ' . $cat_id . ')</label>';
+        echo '<input class = "form-control" type="text" value = "' . $cat_title . '" name="cat_title_edit">';
+        echo '<input type="hidden" value = "' . $cat_id . '" name="cat_id_edit">';
+        echo '<span class = "text-danger">' . $error . '</span>';
         echo '</div>';
         echo '<div class = "form-group">';
         echo '<input class = "btn brn-primary" type="submit" name="submit_edit" value = "Edit category">';
         echo '</div>';
-    }
 }
 
 function showDeleteCategoryForm($cat_id) { // showing the form to delete a category
-    $category = findCategoriesById($cat_id);
-    if ($category !== false) {
         echo '<div class = "form-group">';
-        echo '<label for "cat_title">Delete Category (id = '.$category["cat_id"].')</label>';
-        echo '<input type="hidden" value = "'.$category['cat_id'].'" name="cat_id">';
+        echo '<label for "cat_title">Delete Category (id = ' . $cat_id . ')</label>';
+        echo '<input type="hidden" value = "' . $cat_id . '" name="cat_id_delete">';
         echo '</div>';
         echo '<div class = "form-group">';
         echo '<input class = "btn brn-primary" type="submit" name="submit_delete" value = "Delete category">';
         echo '</div>';
-    }
-
 }
 
 function showDeletePostForm($post_id) { // showing the form to delete a post

@@ -12,11 +12,6 @@
                 <span class = "input-group-btn">
                     <button class="btn btn-primary" name="submitLog" type="submit">Submit</button>
                 </span>
-                <?php if (isset($_SESSION["auth"])) { ?>
-                    <span class = "input-group-btn">
-                        <button class="btn btn-primary" name="logout" type="submit">Logout</button>
-                    </span>
-                <?php } ?>
             </div>
             <div class = "input-group">
                 <input type="checkbox" name="remember" value="1"> Remember me
@@ -28,18 +23,16 @@
         <!-- /.input-group -->
     </div>
     <?php } ?>
-
-
     <div class="well">
         <h4>Blog Search</h4>
         <form action="/mvcframework/main/search" method="POST">
             <div class="input-group">
                 <input type="text" name = "search" class="form-control">
                 <span class="input-group-btn">
-                        <button name = "submit" type = "submit" class="btn btn-default" type="button">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </button>
-                    </span>
+                    <button name = "submit" type = "submit" class="btn btn-default" type="button">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
             </div>
         </form>
         <!-- /.input-group -->

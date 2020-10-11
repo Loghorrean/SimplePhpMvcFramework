@@ -19,7 +19,54 @@ class AdminModel implements Model {
     }
 
     private function getCommonData() {
-        //TODO: Need to fetch values, that are used across all pages
+        //TODO: implement the way to get a data used across all pages
+    }
+
+    public function checkGetCategory($get) {
+        $_SESSION["error"] = "";
+        if (!checkId($get)) {
+            $_SESSION["error"] = "Wrong id format";
+        } elseif (!$this->findCategoryById($get)) {
+            $_SESSION["error"] = "Cannot find category with such id";
+        }
+        if (!empty($_SESSION["error"])) {
+            header("Location:".URL_ROOT."/admin/categories");
+            exit();
+        }
+    }
+
+    public function checkIfCategoryExists($cat_title) {
+        $category = $this->categories->getRow("SELECT * FROM category where cat_title = :ttl", ["ttl" => $cat_title]);
+        if ($category != NULL) {
+            return true;
+        }
+        return false;
+    }
+
+    public function findCategoryById($cat_id) {
+        $category = $this->categories->getRow("SELECT * FROM category WHERE cat_id = :id", ["id" => $cat_id]);
+        if ($category == NULL) {
+            return false;
+        }
+        return $category;
+    }
+
+    public function addCategory($cat_title) {
+        $this->categories->Insert(["cat_ttl" => $cat_title]);
+        $_SESSION["success"] = "Category added";
+        return true;
+    }
+
+    public function deleteCategory($cat_id) {
+        $this->categories->Delete(["id" => $cat_id]);
+        $_SESSION["success"] = "Category deleted";
+        return true;
+    }
+
+    public function editCategory($cat_id, $cat_title) {
+        $this->categories->Update(["id" => $cat_id, "ttl" => $cat_title]);
+        $_SESSION["success"] = "Category edited";
+        return true;
     }
 
     public function getData() {
@@ -42,24 +89,6 @@ class AdminModel implements Model {
     }
 
     public function getCategoriesPage() {
-        if (isset($_POST["submit_add"])) {
-            $this->categories->Insert(["cat_ttl" => $_POST["cat_title"]]);
-            $_SESSION["success"] = "Category added";
-            header("Location: /mvcframework/admin/categories");
-            exit();
-        }
-        if (isset($_POST["submit_delete"])) {
-            $this->categories->Delete(["id" => $_POST["cat_id"]]);
-            $_SESSION["success"] = "Category deleted";
-            header("Location: /mvcframework/admin/categories");
-            exit();
-        }
-        if (isset($_POST["submit_edit"])) {
-            $this->categories->Update(["ttl" => $_POST["cat_title"], "id" => $_POST["cat_id"]]);
-            $_SESSION["success"] = "Category edited";
-            header("Location: /mvcframework/admin/categories");
-            exit();
-        }
         $data = array();
         $data["current_user"] = $_SESSION["username"];
         $sql = "SELECT * from category";

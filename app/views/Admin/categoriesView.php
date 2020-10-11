@@ -18,7 +18,8 @@
                             ?>
                             <div class = "form-group">
                                 <label for = "cat_title">Add Category Title</label>
-                                <input class = "form-control" type="text" name="cat_title">
+                                <input class = "form-control" type="text" name="cat_title" value = <?=$data["cat_title"]?>>
+                                <span class = "text-danger"><?=$data["cat_title_error"]?></span>
                             </div>
                             <div class = "form-group">
                                 <input class = "btn brn-primary" type="submit" name="submit_add" value = "Add category">
@@ -27,7 +28,7 @@
                         <form action="" method = "POST">
                             <?php
                             if (isset($_GET["edit"])) {
-                                showEditCategoryForm($_GET["edit"]);
+                                showEditCategoryForm($_GET["edit"], $data["cat_title_edit"], $data["cat_title_edit_error"]);
                             }
                             if (isset($_GET["delete"])) {
                                 showDeleteCategoryForm($_GET["delete"]);

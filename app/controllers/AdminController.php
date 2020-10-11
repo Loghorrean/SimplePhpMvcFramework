@@ -18,15 +18,67 @@ class AdminController extends Controller {
     }
 
     public function categories() {
-        if (isset($_GET["delete"]) && !checkId($_GET["delete"])) {
-            header("Location: /mvcframework/admin/categories");
-            exit();
-        }
-        if (isset($_GET["edit"]) && !checkId($_GET["edit"])) {
-            header("Location: /mvcframework/admin/categories");
-            exit();
-        }
         $data = $this->model->getCategoriesPage();
+        $data["cat_title"] = $data["cat_title_error"] = "";
+        if (isset($_GET["delete"])) {
+            $this->model->checkGetCategory($_GET["delete"]);
+        }
+        if (isset($_GET["edit"])) {
+            $this->model->checkGetCategory($_GET["edit"]);
+            $data["cat_title_edit"] = $this->model->findCategoryById($_GET["edit"])["cat_title"];
+            $data["cat_title_edit_error"] = "";
+        }
+
+
+        if (isset($_POST["submit_add"])) {
+            $data["cat_title"] = filterInput($_POST["cat_title"]);
+            if (empty($data["cat_title"])) {
+                $data["cat_title_error"] = "This field must not be empty";
+            } elseif ($this->model->checkIfCategoryExists($data["cat_title"])) {
+                $data["cat_title_error"] = "Category with this name already exists";
+            }
+
+            if (empty($data["cat_title_error"])) {
+                if ($this->model->addCategory($data["cat_title"])) {
+                    header("Location:".URL_ROOT."/admin/categories");
+                    exit();
+                }
+                else {
+                    die("Error");
+                }
+            }
+        }
+
+
+        if (isset($_POST["submit_delete"])) {
+            if ($this->model->deleteCategory($_POST["cat_id_delete"])) {
+                header("Location: /mvcframework/admin/categories");
+                exit();
+            }
+            else {
+                die("Error");
+            }
+        }
+
+
+        if (isset($_POST["submit_edit"])) {
+            $data["cat_title_edit"] = filterInput($_POST["cat_title_edit"]);
+            if (empty($data["cat_title_edit"])) {
+                $data["cat_title_edit_error"] = "This field must not be empty";
+            } elseif ($this->model->checkIfCategoryExists($data["cat_title_edit"])) {
+                $data["cat_title_edit_error"] = "Category with this name already exists";
+            }
+
+            if (empty($data["cat_title_edit_error"])) {
+                if ($this->model->editCategory($_POST["cat_id_edit"], $data["cat_title_edit"])) {
+                    header("Location: /mvcframework/admin/categories");
+                    exit();
+                }
+                else {
+                    die("Error");
+                }
+            }
+        }
         $this->getView("Admin/categories", $data);
     }
 
@@ -36,11 +88,9 @@ class AdminController extends Controller {
             header("Location: /mvcframework/admin/posts");
             exit();
         }
+        $source = "";
         if (isset($_GET["source"])) {
             $source = $_GET["source"];
-        }
-        else {
-            $source = "";
         }
         switch($source) {
             case "add_post":
@@ -69,11 +119,9 @@ class AdminController extends Controller {
             header("Location: /mvcframework/admin/users");
             exit();
         }
+        $source = "";
         if (isset($_GET["source"])) {
             $source = $_GET["source"];
-        }
-        else {
-            $source = "";
         }
         switch ($source) {
             case "add_user":

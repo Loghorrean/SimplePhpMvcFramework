@@ -7,18 +7,22 @@ class UsersController extends Controller {
         $this->model = $this->getModel("UsersModel");
     }
     public function registration() {
+        $data = [
+            "name" => "",
+            "name_error" => "",
+            "email" => "",
+            "email_error" => "",
+            "password" => "",
+            "password_error" => "",
+            "verify_password" => "",
+            "verify_password_error" => "",
+        ];
         if (isset($_POST["submitReg"])) {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $data = [
-                "name" => filterInput($_POST["username"]),
-                "email" => filterInput($_POST["email"]),
-                "password" => filterInput($_POST["password"]),
-                "verify_password" => filterInput($_POST["verify_password"]),
-                "name_error" => "",
-                "email_error" => "",
-                "password_error" => "",
-                "verify_password_error" => "",
-            ];
+            $data["name"] = filterInput($_POST["username"]);
+            $data["email"] = filterInput($_POST["email"]);
+            $data["password"] = filterInput($_POST["password"]);
+            $data["verify_password"] = filterInput($_POST["verify_password"]);
 
             if (empty($data["name"])) {
                 $data["name_error"] = "Name field must be filled";
@@ -52,21 +56,8 @@ class UsersController extends Controller {
                     die("Error");
                 }
             }
-            $this->getView('Users/registration', $data);
         }
-        else {
-            $data = [
-                "name" => "",
-                "name_error" => "",
-                "email" => "",
-                "email_error" => "",
-                "password" => "",
-                "password_error" => "",
-                "verify_password" => "",
-                "verify_password_error" => "",
-            ];
-            $this->getView('Users/registration', $data);
-        }
+        $this->getView('Users/registration', $data);
     }
 
     public function login() {
