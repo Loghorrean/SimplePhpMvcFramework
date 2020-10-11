@@ -53,19 +53,16 @@ class AdminModel implements Model {
 
     public function addCategory($cat_title) {
         $this->categories->Insert(["cat_ttl" => $cat_title]);
-        $_SESSION["success"] = "Category added";
         return true;
     }
 
     public function deleteCategory($cat_id) {
         $this->categories->Delete(["id" => $cat_id]);
-        $_SESSION["success"] = "Category deleted";
         return true;
     }
 
     public function editCategory($cat_id, $cat_title) {
         $this->categories->Update(["id" => $cat_id, "ttl" => $cat_title]);
-        $_SESSION["success"] = "Category edited";
         return true;
     }
 

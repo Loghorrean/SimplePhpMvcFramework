@@ -11,8 +11,8 @@
                     </h1>
                 </div>
                 <?php
-                showError();
-                showSuccess();
+                flashMessager("error");
+                flashMessager("success");
                 ?>
                 <table class = "table table-bordered table-hover">
                     <thead>

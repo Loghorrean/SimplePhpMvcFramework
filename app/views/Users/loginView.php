@@ -7,8 +7,8 @@
                     <div class="form-wrap">
                         <h1>Login</h1>
                         <?php
-                        showSuccess();
-                        showError();
+                        flashMessager("registration_success");
+                        flashMessager("registration_error");
                         ?>
                         <form role="form" action="" method="post" id="login-form" autocomplete="off">
                             <div class="form-group">

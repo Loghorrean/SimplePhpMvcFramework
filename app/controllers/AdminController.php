@@ -25,7 +25,7 @@ class AdminController extends Controller {
         }
         if (isset($_GET["edit"])) {
             $this->model->checkGetCategory($_GET["edit"]);
-            $data["cat_title_edit"] = $this->model->findCategoryById($_GET["edit"])["cat_title"];
+            $data["cat_title_edit"] = $previousCatName = $this->model->findCategoryById($_GET["edit"])["cat_title"];
             $data["cat_title_edit_error"] = "";
         }
 
@@ -40,7 +40,8 @@ class AdminController extends Controller {
 
             if (empty($data["cat_title_error"])) {
                 if ($this->model->addCategory($data["cat_title"])) {
-                    header("Location:".URL_ROOT."/admin/categories");
+                    flashMessager("category_add_success", "Category " . $data["cat_title"] . " added succesfully");
+                    redirect("admin/categories");
                     exit();
                 }
                 else {
@@ -52,7 +53,8 @@ class AdminController extends Controller {
 
         if (isset($_POST["submit_delete"])) {
             if ($this->model->deleteCategory($_POST["cat_id_delete"])) {
-                header("Location: " . URL_ROOT . "/admin/categories");
+                flashMessager("category_delete_success", "Category deleted succesfully");
+                redirect("admin/categories");
                 exit();
             }
             else {
@@ -71,7 +73,8 @@ class AdminController extends Controller {
 
             if (empty($data["cat_title_edit_error"])) {
                 if ($this->model->editCategory($_POST["cat_id_edit"], $data["cat_title_edit"])) {
-                    header("Location: " . URL_ROOT . "/admin/categories");
+                    flashMessager("category_edit_success", "Category " . $previousCatName . " edited to " . $data["cat_title_edit"] . " succesfully");
+                    redirect("admin/categories");
                     exit();
                 }
                 else {

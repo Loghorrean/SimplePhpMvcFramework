@@ -14,7 +14,7 @@ class UsersModel implements Model {
 
     public function checkIfUserExists($username) {
         $user = $this->users->getRow("SELECT * from users where username = :name", ["name" => $username]);
-        if ($user !== NULL) {
+        if ($user != NULL) {
             return true;
         }
         return false;
@@ -22,7 +22,7 @@ class UsersModel implements Model {
 
     public function checkIfEmailExists($email) {
         $user = $this->users->getRow("SELECT * FROM users WHERE user_email = :mail", ["mail" => $email]);
-        if ($user !== NULL) {
+        if ($user != NULL) {
             return true;
         }
         return false;
@@ -31,7 +31,7 @@ class UsersModel implements Model {
     public function checkIfPasswordMatch($username, $password) {
         $user = $this->users->getRow("SELECT * FROM users WHERE username = :name", ["name" => $username]);
         $hashed_password = hash("md5", $user["randSalt"].$password);
-        if ($hashed_password !== $user["user_password"]) {
+        if ($hashed_password != $user["user_password"]) {
             return false;
         }
         return true;

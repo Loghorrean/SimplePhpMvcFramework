@@ -5,8 +5,8 @@
         <!-- Blog Entries Column -->
         <div class="col-md-8">
             <?php
-            showSuccess();
-            showError();
+            flashMessager("success");
+            flashMessager("error");
             ?>
             <h1 class="page-header">
                 Main Page

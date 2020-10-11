@@ -1,20 +1,20 @@
 <?php
 /* Functions to show error and success messages */
 
-function showError() { // showing error messages
-    if (isset($_SESSION["error"])) {
-        echo '<p class="text-danger">'.$_SESSION["error"].'</p>';
-        unset($_SESSION["error"]);
-    }
-}
-
-
-function showSuccess() { // showing success messages
-    if (isset($_SESSION["success"])) {
-        echo '<p class="text-success">'.$_SESSION["success"].'</p>';
-        unset($_SESSION["success"]);
-    }
-}
+//function showError() { // showing error messages
+//    if (isset($_SESSION["error"])) {
+//        echo '<p class="text-danger">'.$_SESSION["error"].'</p>';
+//        unset($_SESSION["error"]);
+//    }
+//}
+//
+//
+//function showSuccess() { // showing success messages
+//    if (isset($_SESSION["success"])) {
+//        echo '<p class="text-success">'.$_SESSION["success"].'</p>';
+//        unset($_SESSION["success"]);
+//    }
+//}
 
 
 /* Checker functions */
@@ -73,9 +73,7 @@ function checkPassword(string $password) {
         }
         return false;
     }
-    else {
-        return true;
-    }
+    return true;
 }
 
 function filterInput($value) {
@@ -122,14 +120,14 @@ function showDeletePostForm($post_id) { // showing the form to delete a post
         echo '</form>';
 }
 
-function showPost($row, $read_more = false) {
-    echo '<h2><a href="' . URL_ROOT . '/main/post/'.$row["post_id"].'">' . htmlspecialchars($row["post_title"]) . '</a></h2>';
-    echo '<p class = "lead">by <a href="' . URL_ROOT . '/main/author/'.$row["username"].'">' . htmlspecialchars($row["username"]) . '</a></p><hr>';
-    echo '<p><span class="glyphicon glyphicon-time"></span> Posted on ' . htmlspecialchars($row["post_date"]) . '</p><hr>';
-    echo '<a href="' . URL_ROOT . '/main/post/'.$row["post_id"].'"><img class="img-responsive" src="'.URL_ROOT.'/public/images/'. $row["post_image"] . '" alt="Loading..."></a><hr>';
-    echo '<p style="font-weight: 700">' . $row["post_content"] . '</p>';
+function showPost($post, $read_more = false) {
+    echo '<h2><a href="' . URL_ROOT . '/main/post/'.$post["post_id"].'">' . htmlspecialchars($post["post_title"]) . '</a></h2>';
+    echo '<p class = "lead">by <a href="' . URL_ROOT . '/main/author/'.$post["username"].'">' . htmlspecialchars($post["username"]) . '</a></p><hr>';
+    echo '<p><span class="glyphicon glyphicon-time"></span> Posted on ' . htmlspecialchars($post["post_date"]) . '</p><hr>';
+    echo '<a href="' . URL_ROOT . '/main/post/'.$post["post_id"].'"><img class="img-responsive" src="'.URL_ROOT.'/public/images/'. $post["post_image"] . '" alt="Loading..."></a><hr>';
+    echo '<p style="font-weight: 700">' . $post["post_content"] . '</p>';
     if ($read_more) {
-        echo '<a class="btn btn-primary" href="post.php?p_id='.$row["post_id"].'">Read More ';
+        echo '<a class="btn btn-primary" href="' . URL_ROOT . '/main/post/' . $post["post_id"] . '">Read More ';
         echo '<span class="glyphicon glyphicon-chevron-right"></span>';
         echo '</a>';
     }
@@ -205,6 +203,24 @@ function checkUsersCookie($pdo) {
                 $_SESSION["user_id"] = $user["user_id"];
                 header("Location: /");
             }
+        }
+    }
+}
+
+function redirect($page) {
+    header("Location: " . URL_ROOT . "/" . $page);
+}
+
+function flashMessager($name = "", $message = "", $class = "text-success") {
+    if (!empty($name)) {
+        if (!empty($message) && !isset($_SESSION[$name])) {
+            $_SESSION[$name] = $message;
+            $_SESSION[$name . "_class"] = $class;
+        } elseif (empty($message) && isset($_SESSION[$name])) {
+            $class = !empty($_SESSION[$name . "_class"]) ? $_SESSION[$name . "_class"] : "";
+            echo '<div class = ' . $class . ' id = "msg-flash">' . $_SESSION[$name] . '</div>';
+            unset($_SESSION[$name]);
+            unset($_SESSION[$name . "_class"]);
         }
     }
 }

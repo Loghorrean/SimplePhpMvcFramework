@@ -50,7 +50,8 @@ class UsersController extends Controller {
             if (empty($data["name_error"]) && empty($data["email_error"])
                 && empty($data["password_error"]) && empty($data["verify_password_error"])) {
                 if ($this->model->register($data)) {
-                    header("Location: ".URL_ROOT);
+                    flashMessager("registration_success", "You are registered");
+                    header("Location: " . URL_ROOT . "/users/login");
                 }
                 else {
                     die("Error");
@@ -61,11 +62,6 @@ class UsersController extends Controller {
     }
 
     public function login() {
-        if (isset($_SESSION["auth"])) {
-            $_SESSION["error"] = "You are already logged in";
-            header("Location: ".URL_ROOT);
-            exit();
-        }
         if (isset($_POST["submitLog"])) {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $data = [

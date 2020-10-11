@@ -11,8 +11,8 @@
                     </h1>
                 </div>
                 <?php
-                showError();
-                showSuccess();
+                flashMessager("comment_add_error");
+                flashMessager("comment_add_success");
                 ?>
                 <table class = "table table-bordered table-hover">
                     <thead>
@@ -49,12 +49,18 @@
                     </tbody>
                 </table>
                 <?php
+                flashMessager("comment_unapprove_error");
+                flashMessager("comment_unapprove_success");
                 if (isset($_GET["unapprove"])) {
                     showUnapproveForm($_GET["unapprove"]);
                 }
+                flashMessager("comment_approve_error");
+                flashMessager("comment_approve_success");
                 if (isset($_GET["approve"])) {
                     showApproveForm($_GET["approve"]);
                 }
+                flashMessager("comment_delete_error");
+                flashMessager("comment_delete_success");
                 if (isset($_GET["delete"])) {
                     showDeleteCommentForm($_GET["delete"]);
                 }

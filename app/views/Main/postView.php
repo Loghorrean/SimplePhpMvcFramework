@@ -32,8 +32,8 @@
             <!-- Comment -->
             <h3>Comment section</h3>
             <?php
-            showSuccess();
-            showError();
+            flashMessager("comment_success");
+            flashMessager("comment_error");
             foreach ($data["comments"] as $comment) { ?>
                 <div class = "media">
                     <a class="pull-left" href="#"><img class="media-object" src = "http://placehold.it/64x64" alt = "Loading image"></a>

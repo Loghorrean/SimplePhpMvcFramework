@@ -13,8 +13,8 @@
                     <div class = "col-xs-6">
                         <form action="" method = "POST">
                             <?php
-                            showError();
-                            showSuccess();
+                            flashMessager("category_add_success");
+                            flashMessager("category_add_error");
                             ?>
                             <div class = "form-group">
                                 <label for = "cat_title">Add Category Title</label>
@@ -27,9 +27,13 @@
                         </form>
                         <form action="" method = "POST">
                             <?php
+                            flashMessager("category_edit_success");
+                            flashMessager("category_edit_error");
                             if (isset($_GET["edit"])) {
                                 showEditCategoryForm($_GET["edit"], $data["cat_title_edit"], $data["cat_title_edit_error"]);
                             }
+                            flashMessager("category_delete_success");
+                            flashMessager("category_delete_error");
                             if (isset($_GET["delete"])) {
                                 showDeleteCategoryForm($_GET["delete"]);
                             }

@@ -9,6 +9,7 @@
                         <?php
                         showSuccess();
                         showError();
+                        var_dump($data);
                         ?>
                         <form role="form" action="" method="post" id="login-form" autocomplete="off">
                             <div class="form-group">
