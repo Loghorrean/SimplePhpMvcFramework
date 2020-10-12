@@ -45,7 +45,7 @@
                 <ul class="list-unstyled">
                     <?php
                     foreach ($data["categories"] as $category) {
-                        echo "<li><a href = '".URL_ROOT."/main/cat/{$category["cat_id"]}'>{$category["cat_title"]}</a></li>";
+                        echo "<li><a href = '".URL_ROOT."/main/cat/{$category["cat_title"]}'>{$category["cat_title"]}</a></li>";
                     }
                     ?>
                 </ul>
