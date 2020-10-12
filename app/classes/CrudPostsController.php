@@ -30,9 +30,6 @@ class CrudPostsController extends Database implements CrudController {
             $this->beginTransaction();
             $sql = "DELETE from posts where post_id = :id";
             $this->run($sql, $values);
-            $comments = CrudCommentsController::getInstance();
-            $sql = "DELETE from comments where comment_post_id = :id";
-            $comments->sql($sql, $values);
             $this->commit();
         } catch (\PDOException $e) {
             $this->rollBack();
