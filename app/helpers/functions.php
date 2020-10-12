@@ -136,31 +136,30 @@ function showPost($post, $read_more = false) {
 function showDeleteCommentForm($com_id) { // showing a form to delete a comment
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
-    echo '<label for="post_title">Delete Comment (id = '.$comment["comment_id"].')</label>';
-    echo '<input type="hidden" value="'.$comment["comment_id"].'" name="comment_id">';
-    echo '<input type="hidden" value="'.$comment["comment_post_id"].'" name="comment_post_id">';
+    echo '<label for="post_title">Delete Comment (id = '.$com_id.')</label>';
+    echo '<input type="hidden" value="'.$com_id.'" name="comment_id">';
     echo '</div>';
     echo '<div class = "form-group">';
     echo '<input class = "btn btn-primary" type="submit" name="submit_delete" value = "Delete comment">';
     echo '</div>';
 }
 
-function showApproveForm($com_id) { // showing the form to approve comment
+function showApproveCommentForm($com_id) { // showing the form to approve comment
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
-    echo '<label for="post_title">Approve Comment (id = '.$comment["comment_id"].')</label>';
-    echo '<input type="hidden" value="'.$comment["comment_id"].'" name="comment_id">';
+    echo '<label for="post_title">Approve Comment (id = '.$com_id.')</label>';
+    echo '<input type="hidden" value="'.$com_id.'" name="comment_id">';
     echo '</div>';
     echo '<div class = "form-group">';
     echo '<input class = "btn btn-primary" type="submit" name="submit_approve" value = "Approve comment">';
     echo '</div>';
 }
 
-function showUnapproveForm($com_id) { // showing the form to unapprove comment
+function showUnapproveCommentForm($com_id) { // showing the form to unapprove comment
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
-    echo '<label for="post_title">Unapprove Comment (id = '.$comment["comment_id"].')</label>';
-    echo '<input type="hidden" value="'.$comment["comment_id"].'" name="comment_id">';
+    echo '<label for="post_title">Unapprove Comment (id = '.$com_id.')</label>';
+    echo '<input type="hidden" value="'.$com_id.'" name="comment_id">';
     echo '</div>';
     echo '<div class = "form-group">';
     echo '<input class = "btn btn-primary" type="submit" name="submit_unapprove" value = "Unapprove comment">';

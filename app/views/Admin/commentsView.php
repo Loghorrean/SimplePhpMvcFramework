@@ -52,12 +52,12 @@
                 flashMessager("comment_unapprove_error");
                 flashMessager("comment_unapprove_success");
                 if (isset($_GET["unapprove"])) {
-                    showUnapproveForm($_GET["unapprove"]);
+                    showUnapproveCommentForm($_GET["unapprove"]);
                 }
                 flashMessager("comment_approve_error");
                 flashMessager("comment_approve_success");
                 if (isset($_GET["approve"])) {
-                    showApproveForm($_GET["approve"]);
+                    showApproveCommentForm($_GET["approve"]);
                 }
                 flashMessager("comment_delete_error");
                 flashMessager("comment_delete_success");
