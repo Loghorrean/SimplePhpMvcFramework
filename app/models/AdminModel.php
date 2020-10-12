@@ -68,7 +68,6 @@ class AdminModel implements Model {
 
     public function getData() {
         $data = array();
-        $data["current_user"] = $_SESSION["username"];
         $data["counter"] = array();
         $sql = "SELECT (SELECT count(post_id) from posts) as postCount, ";
         $sql .= "(SELECT count(post_id) from posts where post_status = 'draft') as draftPostCount, ";
@@ -87,7 +86,6 @@ class AdminModel implements Model {
 
     public function getCategoriesPage() {
         $data = array();
-        $data["current_user"] = $_SESSION["username"];
         $sql = "SELECT * from category";
         $data["categories"] = $this->categories->getRows($sql);
         return $data;
@@ -112,8 +110,20 @@ class AdminModel implements Model {
 
     public function getAddPostPage() {
         $data = array();
-        $sql = "SELECT * from category";
-        $data["categories"] = $this->categories->getRows($sql);
+        $data["categories"] = $this->categories->getRows("SELECT * FROM category");
+        if (isset($_POST["create_post"])) {
+            //TODO: implement the way to handle POST data correctly (select lists and file uploads)
+        }
+        else {
+            $data = [
+                "post_title" => "",
+                "post_title_error" => "",
+                "post_tags" => "",
+                "post_tags_error" => "",
+                "post_content" => "",
+                "post_content_error" => ""
+            ];
+        }
         return $data;
     }
 

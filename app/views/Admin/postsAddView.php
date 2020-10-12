@@ -13,7 +13,8 @@
 <form action="" method="POST" enctype="multipart/form-data">
     <div class = "form-group">
         <label for = "post_title">Post Title</label>
-        <input type="text" class = "form-control" name="post_title" id="post_title">
+        <input type="text" class = "form-control" name="post_title" id="post_title" value = <?=$data["post_title"]?>>
+        <span class = "text-danger"><?=$data["post_title_error"]?></span>
     </div>
     <div class = "form-group">
         <label for = "post_category_id">Post Category</label><br>
@@ -33,11 +34,15 @@
     </div>
     <div class = "form-group">
         <label for = "post_tags">Post Tags</label>
-        <input type="text" class = "form-control" name="post_tags" id = "post_tags">
+        <input type="text" class = "form-control" name="post_tags" id = "post_tags" value = <?=$data["post_tags"]?>>
+        <span class = "text-danger"><?=$data["post_tags_error"]?></span>
     </div>
     <div class = "form-group">
         <label for = "body">Post Content</label><br>
-        <textarea class = "form_control" id = "body" cols = "30" rows = "20" name = "post_content"></textarea>
+        <textarea class = "form_control" id = "body" cols = "30" rows = "20" name = "post_content">
+            <?=$data["post_content"]?>
+        </textarea>
+        <span class = "text-danger"><?=$data["post_content_error"]?></span>
     </div>
     <div class = "form-group">
         <label for = "post_status">Post Status</label>
