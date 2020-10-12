@@ -5,7 +5,7 @@ class CrudUsersController extends Database implements CrudController {
     use basicPdoFunctions;
 
     public function Insert($values = []) {
-        $sql = "INSERT into users (username, user_password, user_firstname, user_lastname, user_email, user_image, user_role, randSalt) ";
+        $sql = "INSERT INTO users (username, user_password, user_firstname, user_lastname, user_email, user_image, user_role, randSalt) ";
         $sql .= "VALUES (:name, :pwd, :fname, :lname, :mail, :img, :role, :salt)";
         $this->run($sql, $values);
     }
@@ -17,7 +17,7 @@ class CrudUsersController extends Database implements CrudController {
     }
 
     public function Delete($values = []) {
-        $sql = "DELETE from users where user_id = :id";
+        $sql = "DELETE FROM users WHERE user_id = :id";
         $this->run($sql, $values);
     }
 }

@@ -6,7 +6,7 @@ class CrudPostsController extends Database implements CrudController {
 
     public function Insert($values = []) {
         try {
-            $sql = "INSERT into posts (post_category_id, post_title, post_author_id, post_date, post_image, post_content, post_tags, post_status) ";
+            $sql = "INSERT INTO posts (post_category_id, post_title, post_author_id, post_date, post_image, post_content, post_tags, post_status) ";
             $sql .= "VALUES (:cat_id, :ttl, :auth_id, now(), :img, :cont, :tag, :stat)";
             $this->run($sql, $values);
         } catch (\PDOException $e) {
@@ -16,7 +16,7 @@ class CrudPostsController extends Database implements CrudController {
 
     public function Update($values = []) {
         try {
-            $sql = "UPDATE posts set post_category_id = :cat_id, post_title = :ttl, post_author_id = :auth_id, ";
+            $sql = "UPDATE posts SET post_category_id = :cat_id, post_title = :ttl, post_author_id = :auth_id, ";
             $sql .= "post_date = now(), post_image = :img, post_content = :cnt, post_tags = :tags, post_status = :stat ";
             $sql .= "WHERE post_id = :id";
             $this->run($sql, $values);
@@ -28,7 +28,7 @@ class CrudPostsController extends Database implements CrudController {
     public function Delete($values = []) {
         try {
             $this->beginTransaction();
-            $sql = "DELETE from posts where post_id = :id";
+            $sql = "DELETE FROM posts WHERE post_id = :id";
             $this->run($sql, $values);
             $this->commit();
         } catch (\PDOException $e) {

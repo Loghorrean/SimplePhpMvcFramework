@@ -45,8 +45,8 @@ trait basicPdoFunctions {
                 // $key is a mark for the prepare statement (like :id, :name and so on)
                 // $v is what you want to insert into the database
                 foreach ($values as $key => &$v) {
-//                    $data_type = $this->getDataType($v);
-//                    echo $data_type;
+                    // $data_type = $this->getDataType($v);
+                    // echo $data_type;
                     // TODO: fix issue with dynamic data_type
                     $query->bindValue($key, $v);
                 }
