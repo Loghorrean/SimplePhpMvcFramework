@@ -93,32 +93,24 @@ class AdminModel implements Model {
         return $data;
     }
 
-    public function getPostsPage() {
-        if (isset($_POST["submit_delete"])) {
-            $this->posts->Delete(["id" => $_POST["post_id"]]);
-            header("Location: /mvcframework/admin/posts");
-            exit();
-        }
+    public function getShowPostPage($post_id = NULL) {
         $data = array();
         $sql = "SELECT category.cat_title as 'cat_title', users.username as 'post_author', posts.* from posts ";
         $sql .= "left join category on posts.post_category_id = category.cat_id ";
-        $sql .= "left join users on posts.post_author_id = users.user_id order by posts.post_id DESC";
-        $data["posts"] = $this->posts->getRows($sql);
+        $sql .= "left join users on posts.post_author_id = users.user_id ";
+        if (isset($post_id)) {
+            $sql .= " WHERE posts.post_id = :id ";
+        }
+        $sql .= "ORDER BY posts.post_id DESC";
+        if (isset($post_id)) {
+            $data["posts"] = $this->posts->getRows($sql, ["id" => $post_id]);
+        } else {
+            $data["posts"] = $this->posts->getRows($sql);
+        }
         return $data;
     }
 
-    public function getAddPostsPage() {
-        if (isset($_POST["create_post"])) {
-            $uploadDir = __DIR__."/../../public/images/";
-            $allowed_types = ["jpeg", "jpg", "png"];
-            $post_image = uploadFile($uploadDir, "post_image", "/mvcframework/admin/posts", MAX_FILE_SIZE, $allowed_types);
-            $this->posts->Insert(["cat_id" => $_POST["post_category_id"], "ttl" => $_POST["post_title"],
-                "auth_id" => $_SESSION["user_id"], "img" => $post_image, "cont" => $_POST["post_content"],
-                "tag" => $_POST["post_tags"], "stat" => $_POST["post_status"]]);
-            $_SESSION["success"] = "Post added!";
-            header("Location: /mvcframework/admin/posts");
-            exit();
-        }
+    public function getAddPostPage() {
         $data = array();
         $sql = "SELECT * from category";
         $data["categories"] = $this->categories->getRows($sql);
