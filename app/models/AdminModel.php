@@ -142,9 +142,9 @@ class AdminModel implements Model {
   
   public function getShowPostPage($post_id = NULL) {
         $data = array();
-        $sql = "SELECT category.cat_title as 'cat_title', users.username as 'post_author', posts.* from posts ";
-        $sql .= "left join category on posts.post_category_id = category.cat_id ";
-        $sql .= "left join users on posts.post_author_id = users.user_id ";
+        $sql = "SELECT category.cat_title AS 'cat_title', users.username AS 'post_author', posts.* FROM posts ";
+        $sql .= "LEFT JOIN category ON posts.post_category_id = category.cat_id ";
+        $sql .= "LEFT JOIN users ON posts.post_author_id = users.user_id ";
         if (isset($post_id)) {
             $sql .= " WHERE posts.post_id = :id ";
         }
@@ -157,18 +157,22 @@ class AdminModel implements Model {
         return $data;
     }
 
-    public function getAddPostPage() {  
+    public function getAddPostPage() {
         $data = array();
         if (isset($_POST["create_post"])) {
             //TODO: implement the image uploading
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $post_image = basename($_FILES["post_image"]["name"]);
+            $target_file = APP_ROOT . "/../public/images" . $post_image;
+            $post_image_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION)); // type of uploaded file
             $data = [
                 "post_title" => filterInput($_POST["post_title"]),
                 "post_title_error" => "",
                 "post_tags" => filterInput($_POST["post_tags"]),
                 "post_tags_error" => "",
                 "post_content" => filterInput($_POST["post_content"]),
-                "post_content_error" => ""
+                "post_content_error" => "",
+                "post_image" => basename($_FILES["post_image"]["name"]),
+                "post_image_error" => ""
             ];
             if (empty($data["post_title"])) {
                 $data["post_title_error"] = "Post_title should not be empty";
@@ -184,11 +188,20 @@ class AdminModel implements Model {
                 $data["post_content_error"] = "Post content should not be empty";
             }
 
-            if (empty($data["post_title_error"]) && empty($data["post_tags_error"]) && empty($data["post_content_error"])) {
+            if (empty($data["post_image"])) {
+                $data["post_image_error"] = "No image provided";
+            } elseif (!checkFileType($post_image_type)) {
+                $data["post_image_error"] = "Wrong file extension, only availbale are: " . implode(",", ALLOWED_TYPES);
+            } elseif (!checkFileSize($_FILES["post_image"]["size"])) {
+                $data["post_image_error"] = "File is too big, maximum - ".floor(MAX_FILE_SIZE / 1024 / 1024);
+            }
+
+            if (empty($data["post_title_error"]) && empty($data["post_tags_error"])
+                && empty($data["post_content_error"]) && empty($data["post_image_error"])) {
+                move_uploaded_file($_FILES["post_image"]["tmp_name"], $target_file);
                 if ($this->addPost(["cat_id" => $_POST["post_category_id"], "ttl" => $data["post_title"], "auth_id" => $_SESSION["user_id"],
-                    "img" => NULL, "cont" => $data["post_content"], "tag" => $data["post_tags"], "stat" => $_POST["post_status"]])) {
-//                    flashMessager("");
-                    // TODO: implement the flash message of adding posts
+                    "img" => $data["post_image"], "cont" => $data["post_content"], "tag" => $data["post_tags"], "stat" => $_POST["post_status"]])) {
+                    flashMessager("post_add_success", "Post successfully added");
                     redirect("admin/posts");
                 }
                 else {
@@ -203,7 +216,9 @@ class AdminModel implements Model {
                 "post_tags" => "",
                 "post_tags_error" => "",
                 "post_content" => "",
-                "post_content_error" => ""
+                "post_content_error" => "",
+                "post_image" => "",
+                "post_image_error" => ""
             ];
         }
         $data["categories"] = $this->categories->getRows("SELECT * FROM category");

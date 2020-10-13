@@ -21,9 +21,7 @@
         <select name="post_category_id" id = "post_category_id">
             <?php
             foreach($data["categories"] as $category) {
-                $cat_id = $category["cat_id"];
-                $cat_title = $category["cat_title"];
-                echo "<option value = '{$cat_id}'>$cat_title</option>";
+                echo "<option value = '{$category["cat_id"]}'>" . $category["cat_title"] . "</option>";
             }
             ?>
         </select>
@@ -31,6 +29,7 @@
     <div class = "form-group">
         <label for = "post_image">Post Image</label>
         <input type="file" name="post_image">
+        <span class = "text-danger"><?=$data["post_image_error"]?></span>
     </div>
     <div class = "form-group">
         <label for = "post_tags">Post Tags</label>

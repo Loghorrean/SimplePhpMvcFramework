@@ -206,43 +206,42 @@ function flashMessager($name = "", $message = "", $class = "text-success") {
     }
 }
 
-function checkFileSize(int $fileSize, int $maxSize) {
-    if ($fileSize > $maxSize) {
-        $maxSizeMb = floor($maxSize / 1024 / 1024);
-        $_SESSION["error"] = "Invalid file size (max = {$maxSizeMb})!";
+function checkFileSize(int $fileSize) {
+    if ($fileSize > MAX_FILE_SIZE) {
         return false;
     }
     return true;
 }
 
-function checkFileType(string $fileType, array $types) {
-    $checked = false;
-    for($i = 0; $i < count($types); $i++) {
-        if ($fileType == $types[$i]) {
-            $checked = true;
-            break;
-        }
+function checkFileType(string $fileType) {
+    if (!in_array($fileType, ALLOWED_TYPES)) {
+        return false;
     }
-    return $checked;
+    return true;
 }
 
-function uploadFile(string $uploadDir, string $fileSelect, string $page, int $maxFileSize = 5000000, array $allowedTypes) {
+function isFileValid($post_image_size, $post_image_type) {
+    if ($post_image_size > MAX_FILE_SIZE) {
+        return false;
+    }
+    if (!in_array($post_image_type, ALLOWED_TYPES)) {
+        return false;
+    }
+    return true;
+}
+
+function uploadFile(string $uploadDir, string $fileSelect) {
     if (!empty($_FILES[$fileSelect]["name"])) {
         $post_image = basename($_FILES[$fileSelect]["name"]);
         $target_file = $uploadDir . $post_image;
         $post_image_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION)); // type of uploaded file
         $post_image_temp = $_FILES[$fileSelect]["tmp_name"]; // temporary file name on client's computer
         $post_image_size = $_FILES[$fileSelect]["size"]; // size of uploaded file
-        if (!checkFileSize($post_image_size, $maxFileSize)) {
-            header("Location: ".$page);
-            exit();
+        if (isFileValid($post_image_size, $post_image_type)) {
+            move_uploaded_file($post_image_temp, $target_file);
+            return $post_image;
         }
-        if (!checkFileType($post_image_type, $allowedTypes)) {
-            $_SESSION["error"] = "Unallowed file type!";
-            header("Location: ".$page);
-            exit();
-        }
-        move_uploaded_file($post_image_temp, $target_file);
-        return $post_image;
+        return false;
     }
+    return false;
 }
