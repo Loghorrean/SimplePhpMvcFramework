@@ -6,11 +6,6 @@
                 <div class="col-xs-6 col-xs-offset-3">
                     <div class="form-wrap">
                         <h1>Register</h1>
-                        <?php
-                        showSuccess();
-                        showError();
-                        var_dump($data);
-                        ?>
                         <form role="form" action="" method="post" id="login-form" autocomplete="off">
                             <div class="form-group">
                                 <label for="username" class="sr-only">Username</label>

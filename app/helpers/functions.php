@@ -69,7 +69,7 @@ function checkPassword(string $password) {
     }
     if (!$check) {
         foreach($errors as $error) {
-            $_SESSION["error"] .= $error;
+            flashMessager("error", $error);
         }
         return false;
     }
