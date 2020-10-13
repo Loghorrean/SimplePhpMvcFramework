@@ -26,13 +26,13 @@ class AdminModel implements Model {
             $_SESSION["error"] = "Cannot find category with such id";
         }
         if (!empty($_SESSION["error"])) {
-            header("Location:".URL_ROOT."/admin/categories");
+            redirect("admin/categories");
             exit();
         }
     }
 
     public function checkIfCategoryExists($cat_title) {
-        $category = $this->categories->getRow("SELECT * FROM category where cat_title = :ttl", ["ttl" => $cat_title]);
+        $category = $this->categories->getRow("SELECT * FROM category WHERE cat_title = :ttl", ["ttl" => $cat_title]);
         if ($category != NULL) {
             return true;
         }
@@ -54,6 +54,27 @@ class AdminModel implements Model {
         }
         return false;
     }
+  
+    public function findCommentById($comment_id) {
+        $comment = $this->comments->getRow("SELECT * FROM comments WHERE comment_id = :id", ["id" => $comment_id]);
+        if ($comment == NULL) {
+            return false;
+        }
+        return $comment;
+    }
+
+    public function checkGetComment($get) {
+        $_SESSION["error"] = "";
+        if (!checkId($get)) {
+            $_SESSION["error"] = "Wrong id format";
+        } elseif (!$this->findCommentById($get)) {
+            $_SESSION["error"] = "Couldn't find comment with such id!";
+        }
+        if (!empty($_SESSION["error"])) {
+            redirect("admin/comments");
+            exit();
+        }
+    }
 
     public function addCategory($cat_title) {
         $this->categories->Insert(["cat_ttl" => $cat_title]);
@@ -72,19 +93,29 @@ class AdminModel implements Model {
 
     public function addPost($values) {
         $this->posts->Insert($values);
+    }
+      
+    public function deleteComment($com_id) {
+        $this->comments->Delete(["id" => $com_id]);
+        return true;
+    }
+
+    public function setCommentStatus($com_id, $status) {
+        $this->comments->sql("UPDATE comments SET comment_status = :status WHERE comment_id = :id",
+            ["status" => $status, "id" => $com_id]);
         return true;
     }
 
     public function getData() {
         $data = array();
         $data["counter"] = array();
-        $sql = "SELECT (SELECT count(post_id) from posts) as postCount, ";
-        $sql .= "(SELECT count(post_id) from posts where post_status = 'draft') as draftPostCount, ";
-        $sql .= "(SELECT count(comment_id) from comments) as comCount, ";
-        $sql .= "(SELECT count(comment_id) from comments where comment_status = 'Unapproved') as unappComCount, ";
-        $sql .= "(SELECT count(user_id) from users) as userCount, ";
-        $sql .= "(SELECT count(user_id) from users where user_role = 'subscriber') as subUserCount, ";
-        $sql .= "(SELECT count(cat_id) from category) as catCount";
+        $sql = "SELECT (SELECT COUNT(post_id) FROM posts) AS postCount, ";
+        $sql .= "(SELECT COUNT(post_id) FROM posts WHERE post_status = 'draft') AS draftPostCount, ";
+        $sql .= "(SELECT COUNT(comment_id) FROM comments) AS comCount, ";
+        $sql .= "(SELECT COUNT(comment_id) FROM comments WHERE comment_status = 'Unapproved') AS unappComCount, ";
+        $sql .= "(SELECT COUNT(user_id) FROM users) AS userCount, ";
+        $sql .= "(SELECT COUNT(user_id) FROM users WHERE user_role = 'Subscriber') AS subUserCount, ";
+        $sql .= "(SELECT COUNT(cat_id) FROM category) AS catCount";
         $counts = $this->posts->getRow($sql);
         $data["counter"]["posts_count"] = $counts["postCount"];
         $data["counter"]["comments_count"] = $counts["comCount"];
@@ -95,12 +126,21 @@ class AdminModel implements Model {
 
     public function getCategoriesPage() {
         $data = array();
-        $sql = "SELECT * from category";
+        $sql = "SELECT * FROM category";
         $data["categories"] = $this->categories->getRows($sql);
         return $data;
     }
 
-    public function getShowPostPage($post_id = NULL) {
+    public function getCommentsPage() {
+        $data = array();
+        $sql = "SELECT posts.post_title AS 'post_title', users.username AS 'username', users.user_email AS 'user_email', comments.* FROM comments ";
+        $sql .= "INNER JOIN posts ON comments.comment_post_id = posts.post_id ";
+        $sql .= "LEFT JOIN users ON comments.comment_author_id = users.user_id";
+        $data["comments"] = $this->comments->getRows($sql);
+        return $data;
+    }
+  
+  public function getShowPostPage($post_id = NULL) {
         $data = array();
         $sql = "SELECT category.cat_title as 'cat_title', users.username as 'post_author', posts.* from posts ";
         $sql .= "left join category on posts.post_category_id = category.cat_id ";
@@ -117,7 +157,7 @@ class AdminModel implements Model {
         return $data;
     }
 
-    public function getAddPostPage() {
+    public function getAddPostPage() {  
         $data = array();
         if (isset($_POST["create_post"])) {
             //TODO: implement the image uploading
@@ -250,34 +290,5 @@ class AdminModel implements Model {
             header("Location: /mvcframework/admin/users");
             exit();
         }
-    }
-
-    public function getCommentsPage() {
-        if (isset($_POST["submit_delete"])) {
-            $this->comments->Delete(["id" => $_POST["comment_id"], "post_id" => $_POST["comment_post_id"]]);
-            $_SESSION["success"] = "Comment deleted!";
-            header("Location: /mvcframework/admin/comments");
-            exit();
-        }
-        if (isset($_POST["submit_approve"])) {
-            $sql = "UPDATE comments set comment_status = 'Approved' where comment_id = :id";
-            $this->comments->sql($sql, ["id" => $_POST["comment_id"]]);
-            $_SESSION["success"] = "Comment approved!";
-            header("Location: /mvcframework/admin/comments");
-            exit();
-        }
-        if (isset($_POST["submit_unapprove"])) {
-            $sql = "UPDATE comments set comment_status = 'Unapproved' where comment_id = :id";
-            $this->comments->sql($sql, ["id" => $_POST["comment_id"]]);
-            $_SESSION["success"] = "Comment unapproved!";
-            header("Location: /mvcframework/admin/comments");
-            exit();
-        }
-        $data = array();
-        $sql = "SELECT posts.post_title as 'post_title', users.username as 'username', users.user_email as 'user_email', comments.* from comments ";
-        $sql .= "inner join posts on comments.comment_post_id = posts.post_id ";
-        $sql .= "left join users on comments.comment_author_id = users.user_id";
-        $data["comments"] = $this->comments->getRows($sql);
-        return $data;
     }
 }

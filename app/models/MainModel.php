@@ -20,35 +20,35 @@ class MainModel implements Model {
 
     private function getCategories($cat_id = NULL) {
         if (isset($cat_id)) {
-            $sql = "SELECT * from category where cat_id = :id";
+            $sql = "SELECT * FROM category WHERE cat_id = :id";
             return $this->categories->getRows($sql, ["id" => $cat_id]);
         }
         else {
-            $sql = "SELECT * from category";
+            $sql = "SELECT * FROM category";
             return $this->categories->getRows($sql);
         }
     }
 
     private function getPosts($post_id = NULL) {
         if (isset($post_id)) {
-            $sql = "SELECT users.username as 'username', posts.* from posts ";
-            $sql .= "left join users on users.user_id = posts.post_author_id where post_status = 'published' and post_id = :id";
+            $sql = "SELECT users.username AS 'username', posts.* FROM posts ";
+            $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id WHERE post_status = 'Published' AND post_id = :id";
             return $this->posts->getRows($sql, ["id" => $post_id]);
         }
         else {
-            $sql = "SELECT users.username as 'username', posts.* from posts ";
-            $sql .= "left join users on users.user_id = posts.post_author_id where post_status = 'published'";
+            $sql = "SELECT users.username AS 'username', posts.* FROM posts ";
+            $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id WHERE post_status = 'Published'";
             return $this->posts->getRows($sql);
         }
     }
 
     private function getUsers($user_id = NULL) {
         if (isset($user_id)) {
-            $sql = "SELECT * from users where user_id = :id";
+            $sql = "SELECT * FROM users WHERE user_id = :id";
             return $this->users->getRow($sql, ["id" => $user_id]);
         }
         else {
-            $sql = "SELECT * from users";
+            $sql = "SELECT * FROM users";
             return $this->users->getRows($sql);
         }
     }
@@ -74,10 +74,10 @@ class MainModel implements Model {
     public function getCatPage($cat_title) {
         $data = array();
         $this->getNavigationData($data);
-        $sql = "SELECT users.username as 'username', posts.*, category.cat_title as 'cat_title' from posts ";
-        $sql .= "left join users on users.user_id = posts.post_author_id ";
-        $sql .= "inner join category on category.cat_id = posts.post_category_id ";
-        $sql .= "where post_status = 'published' and cat_title = :ttl";
+        $sql = "SELECT users.username AS 'username', posts.*, category.cat_title AS 'cat_title' FROM posts ";
+        $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id ";
+        $sql .= "INNER JOIN category ON category.cat_id = posts.post_category_id ";
+        $sql .= "WHERE post_status = 'published' AND cat_title = :ttl";
         $data["posts"] = $this->posts->getRows($sql, ["ttl" => $cat_title]);
         foreach($data["posts"] as &$post) {
             $post["post_content"] = (strlen($post["post_content"]) > 35) ? substr($post["post_content"], 0, 35) . "..." : $post["post_content"];
@@ -91,8 +91,8 @@ class MainModel implements Model {
         $data["search_item"] = $tag;
         $tag = "%".htmlspecialchars($tag)."%";
         $this->getNavigationData($data);
-        $sql = "SELECT users.username as 'username', posts.* from posts ";
-        $sql .= "left join users on users.user_id = posts.post_author_id where post_status = 'published' and post_tags like :tag";
+        $sql = "SELECT users.username AS 'username', posts.* FROM posts ";
+        $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id WHERE post_status = 'Published' AND post_tags LIKE :tag";
         $data["posts"] = $this->posts->getRows($sql, ["tag" => $tag]);
         return $data;
     }
@@ -107,15 +107,15 @@ class MainModel implements Model {
         }
         $data = array();
         $this->getNavigationData($data);
-        $sql = "SELECT users.username as 'username', posts.* from posts ";
-        $sql .= "left join users on users.user_id = posts.post_author_id where post_status = 'published' and post_id = :id";
+        $sql = "SELECT users.username AS 'username', posts.* FROM posts ";
+        $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id WHERE post_status = 'Published' AND post_id = :id";
         $data["post"] = $this->posts->getRow($sql, ["id" => $post_id]);
         if (isset($_SESSION["auth"])) {
             $data["editButton"] = $this->checkEditButton($data["post"]["post_author_id"]);
         }
-        $sql = "SELECT users.username as 'comment_author', comments.* from comments ";
-        $sql .= "left join users on users.user_id = comments.comment_author_id where comment_post_id = :id ";
-        $sql .= "and comment_status = 'Approved' Order By comment_id DESC";
+        $sql = "SELECT users.username AS 'comment_author', comments.* FROM comments ";
+        $sql .= "LEFT JOIN users ON users.user_id = comments.comment_author_id WHERE comment_post_id = :id ";
+        $sql .= "AND comment_status = 'Approved' ORDER BY comment_id DESC";
         $data["comments"] = $this->comments->getRows($sql, ["id" => $post_id]);
         return $data;
     }

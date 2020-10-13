@@ -40,12 +40,12 @@ class AdminController extends Controller {
 
             if (empty($data["cat_title_error"])) {
                 if ($this->model->addCategory($data["cat_title"])) {
-                    flashMessager("category_add_success", "Category " . $data["cat_title"] . " added succesfully");
+                    flashMessager("category_add_success", "Category " . $data["cat_title"] . " added successfully");
                     redirect("admin/categories");
                     exit();
                 }
                 else {
-                    die("Error");
+                    die("Error during adding category");
                 }
             }
         }
@@ -53,12 +53,12 @@ class AdminController extends Controller {
 
         if (isset($_POST["submit_delete"])) {
             if ($this->model->deleteCategory($_POST["cat_id_delete"])) {
-                flashMessager("category_delete_success", "Category deleted succesfully");
+                flashMessager("category_delete_success", "Category deleted successfully");
                 redirect("admin/categories");
                 exit();
             }
             else {
-                die("Error");
+                die("Error during deleting category");
             }
         }
 
@@ -73,18 +73,17 @@ class AdminController extends Controller {
 
             if (empty($data["cat_title_edit_error"])) {
                 if ($this->model->editCategory($_POST["cat_id_edit"], $data["cat_title_edit"])) {
-                    flashMessager("category_edit_success", "Category " . $previousCatName . " edited to " . $data["cat_title_edit"] . " succesfully");
+                    flashMessager("category_edit_success", "Category " . $previousCatName . " edited to " . $data["cat_title_edit"] . " successfully");
                     redirect("admin/categories");
                     exit();
                 }
                 else {
-                    die("Error");
+                    die("Error during editing category");
                 }
             }
         }
         $this->getView("Admin/categories", $data);
     }
-
 
     /*
      * posts actions: show, add, delete, edit
@@ -97,6 +96,44 @@ class AdminController extends Controller {
         array_shift($args);
         $data = call_user_func_array(array($this->model, $action), $args);
         $this->getView("Admin/".$viewName, $data);
+    }
+    public function comments() {
+        $data = $this->model->getCommentsPage();
+        if (isset($_GET["delete"])) {
+            $this->model->checkGetComment($_GET["delete"]);
+        }
+        if (isset($_GET["approve"])) {
+           $this->model->checkGetComment($_GET["approve"]);
+        }
+        if (isset($_GET["unapprove"])) {
+            $this->model->checkGetComment($_GET["unapprove"]);
+        }
+
+        if (isset($_POST["submit_delete"])) {
+            if ($this->model->deleteComment($_GET["delete"])) {
+                flashMessager("comment_delete_success", "Comment deleted");
+                redirect("admin/comments");
+                exit();
+            }
+        }
+
+        if (isset($_POST["submit_approve"])) {
+            if ($this->model->setCommentStatus($_GET["approve"], "Approved")) {
+                flashMessager("comment_approve_success", "Comment approved");
+                redirect("admin/comments");
+                exit();
+            }
+        }
+
+        if (isset($_POST["submit_unapprove"])) {
+            if ($this->model->setCommentStatus($_GET["unapprove"], "Unapproved")) {
+                flashMessager("comment_unapprove_success", "Comment unapproved");
+                redirect("admin/comments");
+                exit();
+            }
+        }
+
+        $this->getView("Admin/comments", $data);
     }
 
     public function users() {
@@ -121,25 +158,5 @@ class AdminController extends Controller {
                 $data = $this->model->getUsersPage();
                 $this->getView("Admin/users", $data);
         }
-    }
-
-    public function comments() {
-        if (isset($_GET["delete"]) && !checkId($_GET["delete"])) {
-            $_SESSION["Wrong delete id!"];
-            header("Location: " . URL_ROOT . "/admin/comments");
-            exit();
-        }
-        if (isset($_GET["approve"]) && !checkId($_GET["approve"])) {
-            $_SESSION["Wrong id to approve"];
-            header("Location: " . URL_ROOT . "/admin/comments");
-            exit();
-        }
-        if (isset($_GET["unapprove"]) && !checkId($_GET["unapprove"])) {
-            $_SESSION["Wrong id to unapprove!"];
-            header("Location: /mvcframework/admin/comments");
-            exit();
-        }
-        $data = $this->model->getCommentsPage();
-        $this->getView("Admin/comments", $data);
     }
 }
