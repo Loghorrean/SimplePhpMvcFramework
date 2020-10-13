@@ -46,7 +46,7 @@ class UsersModel implements Model {
         $_SESSION["auth"] = true;
         $_SESSION["user_id"] = $this->users->lastInsertId();
         $_SESSION["username"] = $data["name"];
-        $_SESSION["user_role"] = "subscriber";
+        $_SESSION["user_role"] = "Subscriber";
         return true;
     }
 

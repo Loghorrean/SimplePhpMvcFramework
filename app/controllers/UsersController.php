@@ -51,7 +51,7 @@ class UsersController extends Controller {
                 && empty($data["password_error"]) && empty($data["verify_password_error"])) {
                 if ($this->model->register($data)) {
                     flashMessager("registration_success", "You are registered");
-                    header("Location: " . URL_ROOT . "/users/login");
+                    redirect("users/login");
                 }
                 else {
                     die("Error");

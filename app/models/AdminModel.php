@@ -18,10 +18,6 @@ class AdminModel implements Model {
         $this->comments = CrudCommentsController::getInstance();
     }
 
-    private function getCommonData() {
-        //TODO: implement the way to get a data used across all pages
-    }
-
     public function checkGetCategory($get) {
         $_SESSION["error"] = "";
         if (!checkId($get)) {
@@ -51,6 +47,14 @@ class AdminModel implements Model {
         return $category;
     }
 
+    public function checkIfPostExists($post_title) {
+        $post = $this->posts->getRow("SELECT * FROM posts WHERE post_title = :ttl", ["ttl" => $post_title]);
+        if ($post != NULL) {
+            return true;
+        }
+        return false;
+    }
+
     public function addCategory($cat_title) {
         $this->categories->Insert(["cat_ttl" => $cat_title]);
         return true;
@@ -63,6 +67,11 @@ class AdminModel implements Model {
 
     public function editCategory($cat_id, $cat_title) {
         $this->categories->Update(["id" => $cat_id, "ttl" => $cat_title]);
+        return true;
+    }
+
+    public function addPost($values) {
+        $this->posts->Insert($values);
         return true;
     }
 
@@ -110,9 +119,42 @@ class AdminModel implements Model {
 
     public function getAddPostPage() {
         $data = array();
-        $data["categories"] = $this->categories->getRows("SELECT * FROM category");
         if (isset($_POST["create_post"])) {
-            //TODO: implement the way to handle POST data correctly (select lists and file uploads)
+            //TODO: implement the image uploading
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $data = [
+                "post_title" => filterInput($_POST["post_title"]),
+                "post_title_error" => "",
+                "post_tags" => filterInput($_POST["post_tags"]),
+                "post_tags_error" => "",
+                "post_content" => filterInput($_POST["post_content"]),
+                "post_content_error" => ""
+            ];
+            if (empty($data["post_title"])) {
+                $data["post_title_error"] = "Post_title should not be empty";
+            } elseif ($this->checkIfPostExists($data["post_title"])) {
+                $data["post_title_error"] = "Post with such name already exists";
+            }
+
+            if (empty($data["post_tags"])) {
+                $data["post_tags_error"] = "Post tags should not be empty";
+            }
+
+            if (empty($data["post_content"])) {
+                $data["post_content_error"] = "Post content should not be empty";
+            }
+
+            if (empty($data["post_title_error"]) && empty($data["post_tags_error"]) && empty($data["post_content_error"])) {
+                if ($this->addPost(["cat_id" => $_POST["post_category_id"], "ttl" => $data["post_title"], "auth_id" => $_SESSION["user_id"],
+                    "img" => NULL, "cont" => $data["post_content"], "tag" => $data["post_tags"], "stat" => $_POST["post_status"]])) {
+//                    flashMessager("");
+                    // TODO: implement the flash message of adding posts
+                    redirect("admin/posts");
+                }
+                else {
+                    die("Error occured during adding post");
+                }
+            }
         }
         else {
             $data = [
@@ -124,6 +166,7 @@ class AdminModel implements Model {
                 "post_content_error" => ""
             ];
         }
+        $data["categories"] = $this->categories->getRows("SELECT * FROM category");
         return $data;
     }
 
