@@ -1,24 +1,5 @@
 <?php
-/* Functions to show error and success messages */
-
-//function showError() { // showing error messages
-//    if (isset($_SESSION["error"])) {
-//        echo '<p class="text-danger">'.$_SESSION["error"].'</p>';
-//        unset($_SESSION["error"]);
-//    }
-//}
-//
-//
-//function showSuccess() { // showing success messages
-//    if (isset($_SESSION["success"])) {
-//        echo '<p class="text-success">'.$_SESSION["success"].'</p>';
-//        unset($_SESSION["success"]);
-//    }
-//}
-
-
 /* Checker functions */
-
 
 function checkId($id) { // checking the id of the table
     if (empty($id)) {
@@ -69,7 +50,7 @@ function checkPassword(string $password) {
     }
     if (!$check) {
         foreach($errors as $error) {
-            flashMessager("error", $error);
+            $_SESSION["error"] .= $error;
         }
         return false;
     }

@@ -22,7 +22,7 @@
             </div>
             <div class = "col-xs-4">
                 <input type="submit" name="submitBulk" class="btn btn-success" value="Apply">
-                <a href="?source=add_post" class="btn btn-primary">Add New</a>
+                <a href="<?=URL_ROOT?>/admin/posts/add" class="btn btn-primary">Add New</a>
             </div>
             <thead>
             <tr>
@@ -63,8 +63,8 @@
                     <td><?=$post["post_status"]?></td>
                     <td><?=$post["view_count"]?></td>
                     <td><button class = "btn"><a href="<?=URL_ROOT?>/main/post/<?=$post["post_id"]?>">View</a></button></td>
-                    <td><button class = "btn"><a href="<?=URL_ROOT?>/admin/posts?delete=<?=$post["post_id"]?>">Delete</a></button></td>
-                    <td><button class = "btn"><a href="<?=URL_ROOT?>/admin/posts/<?=$post["post_id"]?>?source=edit_post">Edit</a></button></td>
+                    <td><button class = "btn"><a href="<?=URL_ROOT?>/admin/posts/delete/<?=$post["post_id"]?>">Delete</a></button></td>
+                    <td><button class = "btn"><a href="<?=URL_ROOT?>/admin/posts/edit/<?=$post["post_id"]?>">Edit</a></button></td>
                 </tr>
             <?php } ?>
             </tbody>

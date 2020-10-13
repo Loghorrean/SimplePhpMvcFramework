@@ -85,6 +85,18 @@ class AdminController extends Controller {
         $this->getView("Admin/categories", $data);
     }
 
+    /*
+     * posts actions: show, add, delete, edit
+     * urls like: admin/posts/show/1, admin/posts/add, admin/posts/edit/1, admin/posts/delete/1
+     */
+    public function posts($action = "show", $post_id = NULL) {
+        $viewName = "posts" . ucfirst($action);
+        $action = "get" . ucfirst($action) . "PostPage";
+        $args = func_get_args();
+        array_shift($args);
+        $data = call_user_func_array(array($this->model, $action), $args);
+        $this->getView("Admin/".$viewName, $data);
+    }
     public function comments() {
         $data = $this->model->getCommentsPage();
         if (isset($_GET["delete"])) {
@@ -122,38 +134,6 @@ class AdminController extends Controller {
         }
 
         $this->getView("Admin/comments", $data);
-    }
-
-    //posts actions: show, add, update, delete
-    public function posts($action = "show", $post_id = NULL) {
-        if (isset($_GET["delete"]) && !checkId($_GET["delete"])) {
-            $_SESSION["error"] = "Wrong delete id!";
-            redirect("admin/posts");
-            exit();
-        }
-        $source = "";
-        if (isset($_GET["source"])) {
-            $source = $_GET["source"];
-        }
-        switch($source) {
-            case "add_post":
-                $data = $this->model->getAddPostsPage();
-                $this->getView("Admin/postsAdd", $data);
-                break;
-            case "edit_post" :
-//                TODO: implement the edit_post function
-                if ($post_id === NULL) {
-                    $_SESSION["error"] = "Wrong edit id!";
-                    header("Location: " . URL_ROOT . "/admin/posts");
-                    exit();
-                }
-                $data = $this->model->getEditPostPage();
-                $this->getView("Admin/postsEdit", $data);
-                break;
-            default:
-                $data = $this->model->getPostsPage();
-                $this->getView("Admin/posts", $data);
-        }
     }
 
     public function users() {
