@@ -1,24 +1,5 @@
 <?php
-/* Functions to show error and success messages */
-
-//function showError() { // showing error messages
-//    if (isset($_SESSION["error"])) {
-//        echo '<p class="text-danger">'.$_SESSION["error"].'</p>';
-//        unset($_SESSION["error"]);
-//    }
-//}
-//
-//
-//function showSuccess() { // showing success messages
-//    if (isset($_SESSION["success"])) {
-//        echo '<p class="text-success">'.$_SESSION["success"].'</p>';
-//        unset($_SESSION["success"]);
-//    }
-//}
-
-
 /* Checker functions */
-
 
 function checkId($id) { // checking the id of the table
     if (empty($id)) {
@@ -69,7 +50,7 @@ function checkPassword(string $password) {
     }
     if (!$check) {
         foreach($errors as $error) {
-            flashMessager("error", $error);
+//            $_SESSION["error"] .= $error;
         }
         return false;
     }
@@ -111,8 +92,8 @@ function showDeleteCategoryForm($cat_id) { // showing the form to delete a categ
 function showDeletePostForm($post_id) { // showing the form to delete a post
         echo '<form action = "" method = "POST">';
         echo '<div class = "form-group">';
-        echo '<label for "post_title">Delete Post (id = '.$post["post_id"].')</label>';
-        echo '<input type="hidden" value = "'.$post['post_id'].'" name="post_id">';
+        echo '<label for "post_title">Delete Post (id = '.$post_id.')</label>';
+        echo '<input type="hidden" value = "'.$post_id.'" name="post_id">';
         echo '</div>';
         echo '<div class = "form-group">';
         echo '<input class = "btn btn-primary" type="submit" name="submit_delete" value = "Delete post">';
@@ -138,13 +119,14 @@ function showDeleteCommentForm($com_id) { // showing a form to delete a comment
     echo '<div class = "form-group">';
     echo '<label for="post_title">Delete Comment (id = '.$com_id.')</label>';
     echo '<input type="hidden" value="'.$com_id.'" name="comment_id">';
+    echo '<input type="hidden" value="'.$com_id.'" name="comment_post_id">';
     echo '</div>';
     echo '<div class = "form-group">';
     echo '<input class = "btn btn-primary" type="submit" name="submit_delete" value = "Delete comment">';
     echo '</div>';
 }
 
-function showApproveCommentForm($com_id) { // showing the form to approve comment
+function showApproveForm($com_id) { // showing the form to approve comment
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
     echo '<label for="post_title">Approve Comment (id = '.$com_id.')</label>';
@@ -155,7 +137,7 @@ function showApproveCommentForm($com_id) { // showing the form to approve commen
     echo '</div>';
 }
 
-function showUnapproveCommentForm($com_id) { // showing the form to unapprove comment
+function showUnapproveForm($com_id) { // showing the form to unapprove comment
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
     echo '<label for="post_title">Unapprove Comment (id = '.$com_id.')</label>';
@@ -169,8 +151,8 @@ function showUnapproveCommentForm($com_id) { // showing the form to unapprove co
 function showDeleteUserForm($u_id) {
     echo '<form action="" method = "POST">';
     echo '<div class = "form-group">';
-    echo '<label for "user_title">Delete User (id = '.$row["user_id"].')</label>';
-    echo '<input type="hidden" value = "'.$row['user_id'].'" name="user_id" id = "user_id">';
+    echo '<label for "user_title">Delete User (id = '.$u_id.')</label>';
+    echo '<input type="hidden" value = "'.$u_id.'" name="user_id" id = "user_id">';
     echo '</div>';
     echo '<div class = "form-group">';
     echo '<input class = "btn btn-primary" type="submit" name="submit_delete" value = "Delete user">';
