@@ -50,7 +50,7 @@ function checkPassword(string $password) {
     }
     if (!$check) {
         foreach($errors as $error) {
-//            $_SESSION["error"] .= $error;
+            $_SESSION["error"] .= $error;
         }
         return false;
     }

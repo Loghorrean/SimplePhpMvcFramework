@@ -47,6 +47,14 @@ class AdminModel implements Model {
         return $category;
     }
 
+    public function checkIfPostExists($post_title) {
+        $post = $this->posts->getRow("SELECT * FROM posts WHERE post_title = :ttl", ["ttl" => $post_title]);
+        if ($post != NULL) {
+            return true;
+        }
+        return false;
+    }
+  
     public function findCommentById($comment_id) {
         $comment = $this->comments->getRow("SELECT * FROM comments WHERE comment_id = :id", ["id" => $comment_id]);
         if ($comment == NULL) {
@@ -83,6 +91,10 @@ class AdminModel implements Model {
         return true;
     }
 
+    public function addPost($values) {
+        $this->posts->Insert($values);
+    }
+      
     public function deleteComment($com_id) {
         $this->comments->Delete(["id" => $com_id]);
         return true;
@@ -127,42 +139,121 @@ class AdminModel implements Model {
         $data["comments"] = $this->comments->getRows($sql);
         return $data;
     }
-
-    public function getPostsPage() {
-        if (isset($_POST["submit_delete"])) {
-            $this->posts->Delete(["id" => $_POST["post_id"]]);
-            header("Location: /mvcframework/admin/posts");
-            exit();
-        }
+  
+  public function getShowPostPage($post_id = NULL) {
         $data = array();
         $sql = "SELECT category.cat_title as 'cat_title', users.username as 'post_author', posts.* from posts ";
         $sql .= "left join category on posts.post_category_id = category.cat_id ";
-        $sql .= "left join users on posts.post_author_id = users.user_id order by posts.post_id DESC";
-        $data["posts"] = $this->posts->getRows($sql);
+        $sql .= "left join users on posts.post_author_id = users.user_id ";
+        if (isset($post_id)) {
+            $sql .= " WHERE posts.post_id = :id ";
+        }
+        $sql .= "ORDER BY posts.post_id DESC";
+        if (isset($post_id)) {
+            $data["posts"] = $this->posts->getRows($sql, ["id" => $post_id]);
+        } else {
+            $data["posts"] = $this->posts->getRows($sql);
+        }
         return $data;
     }
 
-    public function getAddPostsPage() {
+    public function getAddPostPage() {  
+        $data = array();
         if (isset($_POST["create_post"])) {
-            $uploadDir = __DIR__."/../../public/images/";
-            $allowed_types = ["jpeg", "jpg", "png"];
-            $post_image = uploadFile($uploadDir, "post_image", "/mvcframework/admin/posts", MAX_FILE_SIZE, $allowed_types);
-            $this->posts->Insert(["cat_id" => $_POST["post_category_id"], "ttl" => $_POST["post_title"],
-                "auth_id" => $_SESSION["user_id"], "img" => $post_image, "cont" => $_POST["post_content"],
-                "tag" => $_POST["post_tags"], "stat" => $_POST["post_status"]]);
-            $_SESSION["success"] = "Post added!";
-            header("Location: /mvcframework/admin/posts");
+            //TODO: implement the image uploading
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $data = [
+                "post_title" => filterInput($_POST["post_title"]),
+                "post_title_error" => "",
+                "post_tags" => filterInput($_POST["post_tags"]),
+                "post_tags_error" => "",
+                "post_content" => filterInput($_POST["post_content"]),
+                "post_content_error" => ""
+            ];
+            if (empty($data["post_title"])) {
+                $data["post_title_error"] = "Post_title should not be empty";
+            } elseif ($this->checkIfPostExists($data["post_title"])) {
+                $data["post_title_error"] = "Post with such name already exists";
+            }
+
+            if (empty($data["post_tags"])) {
+                $data["post_tags_error"] = "Post tags should not be empty";
+            }
+
+            if (empty($data["post_content"])) {
+                $data["post_content_error"] = "Post content should not be empty";
+            }
+
+            if (empty($data["post_title_error"]) && empty($data["post_tags_error"]) && empty($data["post_content_error"])) {
+                if ($this->addPost(["cat_id" => $_POST["post_category_id"], "ttl" => $data["post_title"], "auth_id" => $_SESSION["user_id"],
+                    "img" => NULL, "cont" => $data["post_content"], "tag" => $data["post_tags"], "stat" => $_POST["post_status"]])) {
+//                    flashMessager("");
+                    // TODO: implement the flash message of adding posts
+                    redirect("admin/posts");
+                }
+                else {
+                    die("Error occured during adding post");
+                }
+            }
+        }
+        else {
+            $data = [
+                "post_title" => "",
+                "post_title_error" => "",
+                "post_tags" => "",
+                "post_tags_error" => "",
+                "post_content" => "",
+                "post_content_error" => ""
+            ];
+        }
+        $data["categories"] = $this->categories->getRows("SELECT * FROM category");
+        return $data;
+    }
+
+    public function getEditPostPage($post_id = NULL) {
+        $data = array();
+        if ($post_id == NULL) {
+            redirect("admin/posts");
             exit();
         }
-        $data = array();
-        $sql = "SELECT * from category";
-        $data["categories"] = $this->categories->getRows($sql);
-        return $data;
-    }
+        if (isset($_POST["submit_edit"])) {
+            $data = [
+                "post_title" => filterInput($_POST["post_title"]),
+                "post_title_error" => "",
+                "post_image" => "",
+                "post_image_error" => "",
+                "post_tags" => filterInput($_POST["post_tags"]),
+                "post_tags_error" => "",
+                "post_content" => filterInput($_POST["post_content"]),
+                "post_content_error" => ""
+            ];
+            if (empty($data["post_title"])) {
+                $data["post_title_error"] = "Post title should not be empty";
+            } elseif ($this->checkIfPostExists($data["post_title"])) {
+                $data["post_title_error"] = "Post with such title already exists";
+            }
 
-    public function getEditPostPage() {
-        $data = array();
+            if (empty($data["post_tags"])) {
+                $data["post_tags_error"] = "Tags should not be empty";
+            }
 
+            if (empty($data["post_content"])) {
+                $data["post_content_error"] = "Post content should not be empty";
+            }
+        } else {
+            $post = $this->posts->getRow("SELECT * FROM posts WHERE post_id = :id", ["id" => $post_id]);
+            $data = [
+                "post_title" => $post["post_title"],
+                "post_title_error" => "",
+                "post_image" => $post["post_image"],
+                "post_image_error" => "",
+                "post_tags" => $post["post_tags"],
+                "post_tags_error" => "",
+                "post_content" => $post["post_content"],
+                "post_content_error" => ""
+            ];
+        }
+        $data["categories"] = $this->categories->getRows("SELECT * FROM category");
         return $data;
     }
 

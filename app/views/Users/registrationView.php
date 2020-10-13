@@ -18,12 +18,12 @@
                                 <span class = "text-danger"><?=$data["email_error"]?></span>
                             </div>
                             <div class="form-group">
-                                <label for="password" class="sr-only">Password</label>
+                                <label for="key1" class="sr-only">Password</label>
                                 <input type="password" name="password" id="key1" class="form-control" placeholder="Password" value = "<?=$data["password"]?>">
                                 <span class = "text-danger"><?=$data["password_error"]?></span>
                             </div>
                             <div class="form-group">
-                                <label for="password" class="sr-only">Verify Password</label>
+                                <label for="key2" class="sr-only">Verify Password</label>
                                 <input type="password" name="verify_password" id="key2" class="form-control" placeholder="Repeat password" value = "<?=$data["verify_password"]?>">
                                 <span class = "text-danger"><?=$data["verify_password_error"]?></span>
                             </div>

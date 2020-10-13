@@ -61,10 +61,6 @@ class MainModel implements Model {
         }
     }
 
-    private function insertComment() {
-        
-    }
-
     public function getData() {
         $data = array();
         $this->getNavigationData($data);
