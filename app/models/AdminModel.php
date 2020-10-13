@@ -170,9 +170,50 @@ class AdminModel implements Model {
         return $data;
     }
 
-    public function getEditPostPage() {
+    public function getEditPostPage($post_id = NULL) {
         $data = array();
+        if ($post_id == NULL) {
+            redirect("admin/posts");
+            exit();
+        }
+        if (isset($_POST["submit_edit"])) {
+            $data = [
+                "post_title" => filterInput($_POST["post_title"]),
+                "post_title_error" => "",
+                "post_image" => "",
+                "post_image_error" => "",
+                "post_tags" => filterInput($_POST["post_tags"]),
+                "post_tags_error" => "",
+                "post_content" => filterInput($_POST["post_content"]),
+                "post_content_error" => ""
+            ];
+            if (empty($data["post_title"])) {
+                $data["post_title_error"] = "Post title should not be empty";
+            } elseif ($this->checkIfPostExists($data["post_title"])) {
+                $data["post_title_error"] = "Post with such title already exists";
+            }
 
+            if (empty($data["post_tags"])) {
+                $data["post_tags_error"] = "Tags should not be empty";
+            }
+
+            if (empty($data["post_content"])) {
+                $data["post_content_error"] = "Post content should not be empty";
+            }
+        } else {
+            $post = $this->posts->getRow("SELECT * FROM posts WHERE post_id = :id", ["id" => $post_id]);
+            $data = [
+                "post_title" => $post["post_title"],
+                "post_title_error" => "",
+                "post_image" => $post["post_image"],
+                "post_image_error" => "",
+                "post_tags" => $post["post_tags"],
+                "post_tags_error" => "",
+                "post_content" => $post["post_content"],
+                "post_content_error" => ""
+            ];
+        }
+        $data["categories"] = $this->categories->getRows("SELECT * FROM category");
         return $data;
     }
 
