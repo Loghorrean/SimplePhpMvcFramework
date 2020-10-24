@@ -10,6 +10,7 @@
                         Edit your post
                     </h1>
                 </div>
+                <?php var_dump($data); ?>
 <form action="" method="POST" enctype="multipart/form-data">
     <div class = "form-group">
         <label for = "post_title">Post Title</label>

@@ -142,27 +142,24 @@ class AdminModel implements Model {
   
   public function getShowPostPage($post_id = NULL) {
         $data = array();
+        $params = array();
         $sql = "SELECT category.cat_title AS 'cat_title', users.username AS 'post_author', posts.* FROM posts ";
         $sql .= "LEFT JOIN category ON posts.post_category_id = category.cat_id ";
         $sql .= "LEFT JOIN users ON posts.post_author_id = users.user_id ";
         if (isset($post_id)) {
             $sql .= " WHERE posts.post_id = :id ";
+            $params["id"] = $post_id;
         }
         $sql .= "ORDER BY posts.post_id DESC";
-        if (isset($post_id)) {
-            $data["posts"] = $this->posts->getRows($sql, ["id" => $post_id]);
-        } else {
-            $data["posts"] = $this->posts->getRows($sql);
-        }
+        $data["posts"] = $this->posts->getRows($sql, $params);
         return $data;
     }
 
     public function getAddPostPage() {
         $data = array();
-        if (isset($_POST["create_post"])) {
-            //TODO: implement the image uploading
+        if (buttonIsPressed("create_post")) {
             $post_image = basename($_FILES["post_image"]["name"]);
-            $target_file = APP_ROOT . "/../public/images" . $post_image;
+            $target_file = APP_ROOT . "/../public/images/" . $post_image;
             $post_image_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION)); // type of uploaded file
             $data = [
                 "post_title" => filterInput($_POST["post_title"]),
@@ -171,7 +168,7 @@ class AdminModel implements Model {
                 "post_tags_error" => "",
                 "post_content" => filterInput($_POST["post_content"]),
                 "post_content_error" => "",
-                "post_image" => basename($_FILES["post_image"]["name"]),
+                "post_image" => $post_image,
                 "post_image_error" => ""
             ];
             if (empty($data["post_title"])) {
@@ -191,7 +188,7 @@ class AdminModel implements Model {
             if (empty($data["post_image"])) {
                 $data["post_image_error"] = "No image provided";
             } elseif (!checkFileType($post_image_type)) {
-                $data["post_image_error"] = "Wrong file extension, only availbale are: " . implode(",", ALLOWED_TYPES);
+                $data["post_image_error"] = "Wrong file extension, only available are: " . implode(",", ALLOWED_TYPES);
             } elseif (!checkFileSize($_FILES["post_image"]["size"])) {
                 $data["post_image_error"] = "File is too big, maximum - ".floor(MAX_FILE_SIZE / 1024 / 1024);
             }
@@ -227,15 +224,15 @@ class AdminModel implements Model {
 
     public function getEditPostPage($post_id = NULL) {
         $data = array();
-        if ($post_id == NULL) {
+        if (!isset($post_id)) {
             redirect("admin/posts");
             exit();
         }
-        if (isset($_POST["submit_edit"])) {
+        if (buttonIsPressed("submit_edit")) {
             $data = [
                 "post_title" => filterInput($_POST["post_title"]),
                 "post_title_error" => "",
-                "post_image" => "",
+                "post_image" => basename($_FILES["post_image"]["name"]),
                 "post_image_error" => "",
                 "post_tags" => filterInput($_POST["post_tags"]),
                 "post_tags_error" => "",
@@ -254,6 +251,12 @@ class AdminModel implements Model {
 
             if (empty($data["post_content"])) {
                 $data["post_content_error"] = "Post content should not be empty";
+            }
+
+            if (empty($data["post_image"])) {
+                $data["post_image_error"] = "No image provided";
+                $old_image = $this->posts->getRow("SELECT * FROM posts WHERE post_id = :id", ["id" => $post_id])["post_image"];
+                $data["post_image"] = $old_image;
             }
         } else {
             $post = $this->posts->getRow("SELECT * FROM posts WHERE post_id = :id", ["id" => $post_id]);
@@ -275,7 +278,7 @@ class AdminModel implements Model {
     public function getUsersPage() {
         if (isset($_POST["submit_delete"])) {
             $this->users->Delete(["id" => $_POST["user_id"]]);
-            $_SESSION["success"] = "User deleted!";
+            flashMessager("success", "User deleted");
             header("Location: /mvcframework/admin/users");
             exit();
         }

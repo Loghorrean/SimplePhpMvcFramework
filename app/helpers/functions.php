@@ -188,6 +188,13 @@ function checkUsersCookie($pdo) {
     }
 }
 
+function buttonIsPressed($buttonName) {
+    if (isset($_POST[$buttonName])) {
+        return true;
+    }
+    return false;
+}
+
 function redirect($page) {
     header("Location: " . URL_ROOT . "/" . $page);
 }

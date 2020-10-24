@@ -1,11 +1,16 @@
 <?php
 namespace App\Controllers;
 use App\Classes\Controller;
+use App\Loggers\UserLogger;
+
 class UsersController extends Controller {
+    private $logger;
     public function __construct() {
         session_start();
         $this->model = $this->getModel("UsersModel");
+        $this->logger = UserLogger::getInstance();
     }
+
     public function registration() {
         $data = [
             "name" => "",
@@ -17,7 +22,9 @@ class UsersController extends Controller {
             "verify_password" => "",
             "verify_password_error" => "",
         ];
+
         if (isset($_POST["submitReg"])) {
+            $this->logger->logAction("TEST MESSAGE");
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $data["name"] = filterInput($_POST["username"]);
             $data["email"] = filterInput($_POST["email"]);

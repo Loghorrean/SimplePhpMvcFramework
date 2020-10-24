@@ -2,8 +2,10 @@
 namespace App\Models;
 use App\Classes\Model;
 use App\Classes\CrudUsersController;
+
 class UsersModel implements Model {
     private $users;
+    private $logger;
     public function __construct() {
         $this->users = CrudUsersController::getInstance();
     }

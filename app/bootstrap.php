@@ -18,5 +18,7 @@ spl_autoload_register(function ($class) {
 spl_autoload_register(function ($class) {
     MyAutoloader::Modelloader($class);
 });
-
+spl_autoload_register(function ($class) {
+    MyAutoloader::Loggerloader($class);
+});
 $core = new Core();

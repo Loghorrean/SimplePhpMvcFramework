@@ -25,6 +25,12 @@ class MyAutoloader {
         MyAutoloader::Loader($prefix, $base_dir, $classname);
     }
 
+    public static function LoggerLoader($loggerName) {
+        $prefix = "App\\Loggers\\";
+        $base_dir = APP_ROOT."/loggers";
+        MyAutoloader::Loader($prefix, $base_dir, $loggerName);
+    }
+
     private static function Loader($prefix, $base_dir, $classname) {
         $len = strlen($prefix);
         if (strncmp($prefix, $classname, $len) !== 0) {
