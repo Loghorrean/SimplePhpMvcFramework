@@ -56,7 +56,7 @@ class MainModel implements Model {
     private function getNavigationData(&$data) {
         $data["categories"] = $this->getCategories();
         $data["isAdmin"] = false;
-        if (isset($_SESSION["auth"]) && $_SESSION["user_role"] === "Admin") {
+        if (isset($_SESSION["user_id"]) && $_SESSION["user_role"] === "Admin") {
             $data["isAdmin"] = true;
         }
     }
@@ -110,7 +110,7 @@ class MainModel implements Model {
         $sql = "SELECT users.username AS 'username', posts.* FROM posts ";
         $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id WHERE post_status = 'Published' AND post_id = :id";
         $data["post"] = $this->posts->getRow($sql, ["id" => $post_id]);
-        if (isset($_SESSION["auth"])) {
+        if (isset($_SESSION["user_id"])) {
             $data["editButton"] = $this->checkEditButton($data["post"]["post_author_id"]);
         }
         $sql = "SELECT users.username AS 'comment_author', comments.* FROM comments ";

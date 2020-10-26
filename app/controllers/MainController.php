@@ -3,7 +3,6 @@ namespace App\Controllers;
 use App\Classes\Controller;
 class MainController extends Controller {
     public function __construct() {
-        session_start();
         $this->model = $this->getModel('MainModel');
     }
 

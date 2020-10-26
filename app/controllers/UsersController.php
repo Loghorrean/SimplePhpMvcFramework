@@ -6,7 +6,6 @@ use App\Loggers\UserLogger;
 class UsersController extends Controller {
     private $logger;
     public function __construct() {
-        session_start();
         $this->model = $this->getModel("UsersModel");
         $this->logger = UserLogger::getInstance();
     }
@@ -24,7 +23,6 @@ class UsersController extends Controller {
         ];
 
         if (isset($_POST["submitReg"])) {
-            $this->logger->logAction("TEST MESSAGE");
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $data["name"] = filterInput($_POST["username"]);
             $data["email"] = filterInput($_POST["email"]);
@@ -57,8 +55,11 @@ class UsersController extends Controller {
             if (empty($data["name_error"]) && empty($data["email_error"])
                 && empty($data["password_error"]) && empty($data["verify_password_error"])) {
                 if ($this->model->register($data)) {
-                    flashMessager("registration_success", "You are registered");
+                    $this->logger->logAction($_SESSION["username"] . " just got registered");
+                    flashMessager("registration_success", "You are registered as " . $_SESSION["username"]);
+                    unset($_SESSION["username"]);
                     redirect("users/login");
+                    exit();
                 }
                 else {
                     die("Error");
@@ -92,7 +93,8 @@ class UsersController extends Controller {
                     $data["password_error"] = "Wrong username/password!";
                 } else {
                     if ($this->model->login($data)) {
-                        header("Location: ".URL_ROOT);
+                        $this->logger->logAction($_SESSION["username"] . " just logged in");
+                        redirect("main");
                     } else {
                         die("Error");
                     }
@@ -112,6 +114,7 @@ class UsersController extends Controller {
     }
 
     public function logout() {
+        $this->logger->logAction($_SESSION["username"] . " just logged out");
         session_destroy();
         header("Location: ".URL_ROOT);
     }

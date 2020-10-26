@@ -8,6 +8,9 @@ abstract class BaseLogger {
     protected $fileStream;
 
     protected function __construct($filename) {
+        if (self::$path == NULL) {
+            die("Logger is corrupted");
+        }
         $this->file = $filename;
         $this->fileStream = fopen(self::$path.$filename, "a+");
     }
@@ -15,6 +18,7 @@ abstract class BaseLogger {
     private function __clone() {
 
     }
+
     public static function getInstance() {
         $class = get_called_class();
         if (!isset(self::$instances[$class])) {
@@ -23,8 +27,8 @@ abstract class BaseLogger {
         return self::$instances[$class];
     }
 
-    public function logAction($message) {
-        $message .= PHP_EOL;
+    protected function logAction($message) {
+        $message = self::setMessageTime($message);
         if (!fwrite($this->fileStream, $message)) {
             $message = $message . PHP_EOL;
             die("File " . $this->file . " is corrupted ad could not be opened");
@@ -32,10 +36,15 @@ abstract class BaseLogger {
     }
 
     public function logException($message) {
+        $message = self::setMessageTime($message);
         $message = "Unhandled Exception : " . $message . PHP_EOL;
         if (!fwrite($this->fileStream, $message)) {
             die("File " . $this->file . " is corrupted ad could not be opened");
         }
+    }
+
+    private static function setMessageTime($message) {
+        return "(" . date('D M d H:i:s Y' , time()) . ") " . $message . PHP_EOL;
     }
 
     public function setPath($path) {

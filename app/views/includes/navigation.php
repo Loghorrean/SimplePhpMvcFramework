@@ -22,7 +22,7 @@
                 }
                 ?>
             </ul>
-            <?php if (isset($_SESSION["auth"])) { ?>
+            <?php if (isset($_SESSION["user_id"])) { ?>
                 <ul class = "nav navbar-right navbar-nav">
                     <li>
                         <a href = "/mvcframework/main/author/<?=$_SESSION["username"]?>"><?=$_SESSION["username"]?></a>

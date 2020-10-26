@@ -5,6 +5,8 @@ require_once __DIR__."/classes/MyAutoloader.php";
 use App\Classes\MyAutoloader;
 use App\Classes\Core;
 
+session_start();
+
 //AutoLoad
 spl_autoload_register(function ($class) {
     MyAutoloader::Classloader($class);

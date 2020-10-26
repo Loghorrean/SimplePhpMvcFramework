@@ -24,7 +24,7 @@
                             <input type="submit" name="submitLog" id="btn-login" class="btn btn-custom btn-lg btn-block" value="Login!">
                         </form>
                         <p></p>
-                        <a href="./login"><button class = "btn btn-custom btn-lg btn-block">Don't have an account yet? Register!</button></a>
+                        <a href="./registration"><button class = "btn btn-custom btn-lg btn-block">Don't have an account yet? Register!</button></a>
                         <p></p>
                         <a href="<?=URL_ROOT?>"><button class = "btn btn-custom btn-lg btn-block">Back to the main page</button></a>
                     </div>

@@ -42,19 +42,14 @@ class UsersModel implements Model {
     public function register($data) {
         $salt = generateSalt();
         $data["password"] = hash("md5",$salt.$data["password"]);
-        $this->users->sql("INSERT INTO users (username, user_password, user_email) VALUES (:name, :pwd, :mail)",
-            ["name" => $data["name"], "pwd" => $data["password"], "mail" => $data["email"]]);
-        $_SESSION["success"] = "You are registered!";
-        $_SESSION["auth"] = true;
-        $_SESSION["user_id"] = $this->users->lastInsertId();
+        $this->users->sql("INSERT INTO users (username, user_password, user_email, randSalt) VALUES (:name, :pwd, :mail, :salt)",
+            ["name" => $data["name"], "pwd" => $data["password"], "mail" => $data["email"], "salt" => $salt]);
         $_SESSION["username"] = $data["name"];
-        $_SESSION["user_role"] = "Subscriber";
         return true;
     }
 
     public function login($data) {
         $user = $this->users->getRow("SELECT * FROM users WHERE username = :name", ["name" => $data["name"]]);
-        $_SESSION["auth"] = true;
         $_SESSION["user_id"] = $user["user_id"];
         $_SESSION["username"] = $user["username"];
         $_SESSION["user_role"] = $user["user_role"];

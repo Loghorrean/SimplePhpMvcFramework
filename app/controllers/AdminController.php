@@ -3,7 +3,6 @@ namespace App\Controllers;
 use App\Classes\Controller;
 class AdminController extends Controller {
     public function __construct() {
-        session_start();
         if ($_SESSION["user_role"] !== "Admin") {
             $_SESSION["error"] = "You do not have permission to come here";
             header("Location: ".URL_ROOT);
