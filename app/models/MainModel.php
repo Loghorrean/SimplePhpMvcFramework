@@ -29,7 +29,22 @@ class MainModel implements Model {
     public function getData() : array {
         $data = array();
         $this->getNavigationData($data);
-        $data["posts"] = $this->posts->getAll();
+        $page = 0;
+        if (isset($_GET["page"])) {
+            if (!checkId($_GET["page"])) {
+                flashMessager("error", "Page number is incorrect", "text-error");
+                redirect("");
+            }
+            if ($_GET["page"] == 1) {
+                redirect("");
+            }
+            $page = ($_GET["page"] * POSTS_PER_PAGE) - POSTS_PER_PAGE;
+        }
+        $data["countPosts"] = ceil($this->posts->getRow("SELECT COUNT(post_id) as 'count' from posts")["count"] / POSTS_PER_PAGE);
+        $sql = "SELECT users.username AS 'username', posts.* FROM posts ";
+        $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id WHERE post_status = 'Published' ";
+        $sql .= "LIMIT :page, " . POSTS_PER_PAGE;
+        $data["posts"] = $this->posts->getRows($sql, ["page" => $page]);
         foreach($data["posts"] as &$post) {
             $post["post_content"] = (strlen($post["post_content"]) > 35) ? substr($post["post_content"], 0, 35) . "..." : $post["post_content"];
         }
@@ -42,7 +57,7 @@ class MainModel implements Model {
         $sql = "SELECT users.username AS 'username', posts.*, category.cat_title AS 'cat_title' FROM posts ";
         $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id ";
         $sql .= "INNER JOIN category ON category.cat_id = posts.post_category_id ";
-        $sql .= "WHERE post_status = 'published' AND cat_title = :ttl";
+        $sql .= "WHERE post_status = 'published' AND cat_title = :ttl" ;
         $data["posts"] = $this->posts->getRows($sql, ["ttl" => $cat_title]);
         foreach($data["posts"] as &$post) {
             $post["post_content"] = (strlen($post["post_content"]) > 35) ? substr($post["post_content"], 0, 35) . "..." : $post["post_content"];

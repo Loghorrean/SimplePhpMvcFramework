@@ -27,6 +27,9 @@
                 <li class="previous">
                     <a href="#">&larr; Older</a>
                 </li>
+                <?php for($i = 1; $i <= $data["countPosts"]; $i++) { ?>
+                    <li><a href = "<?=URL_ROOT?>?page=<?=$i?>"><?=$i?></a></li>
+                <?php } ?>
                 <li class="next">
                     <a href="#">Newer &rarr;</a>
                 </li>

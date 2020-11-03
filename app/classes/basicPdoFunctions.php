@@ -30,7 +30,7 @@ trait basicPdoFunctions {
      * @param string $value
      * @return string
      */
-    private function getDataType(string $value) : string {
+    private function getDataType($value) : string {
         switch(true) {
             case is_int($value) :
                 return "\PDO::PARAM_INT";
@@ -65,8 +65,6 @@ trait basicPdoFunctions {
         try {
             if (!empty($values)) {
                 $query = $this->prepare($sql);
-                // $key is a mark for the prepare statement (like :id, :name and so on)
-                // $v is what you want to insert into the database
                 foreach ($values as $key => $v) {
                      $data_type = $this->getDataType($v);
                      $data_type = $this->pdoTypeToInteger($data_type);

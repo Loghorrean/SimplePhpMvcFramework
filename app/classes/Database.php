@@ -9,7 +9,7 @@ abstract class Database {
     const DB_USER = Config::DB_USER;
     const DB_PASS = Config::DB_PASS;
 
-    protected $pdo;
+    protected \PDO $pdo;
 
     private static $instances = array();
 
@@ -35,7 +35,7 @@ abstract class Database {
         return self::$instances[$class];
     }
 
-    public function __toString() {
+    public function __toString() : string {
         $str = "Database connection: host - ".self::DB_HOST.", port - ".self::DB_PORT.", db name - ".self::DB_NAME;
         $class = get_called_class();
         $str .= "<br>Instance of ".$class;

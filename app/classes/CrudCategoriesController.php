@@ -5,7 +5,7 @@ class CrudCategoriesController extends Database implements CrudController {
     use basicPdoFunctions;
 
     public function getAll() : array {
-        $sql = "SELECT * FROM category";
+        $sql = "SELECT * FROM category ";
         return $this->getRows($sql);
     }
 

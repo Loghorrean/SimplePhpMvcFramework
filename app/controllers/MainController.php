@@ -6,12 +6,12 @@ class MainController extends Controller {
         $this->model = $this->getModel('MainModel');
     }
 
-    public function index() {
+    public function index() : void {
         $data = $this->model->getData();
         $this->getView("Main/index", $data);
     }
 
-    public function cat($cat_title = NULL) {
+    public function cat(string $cat_title = NULL) : void {
         if (isset($cat_title)) {
             $cat_title = (string)$cat_title;
             $data = $this->model->getCatPage($cat_title);
@@ -22,7 +22,7 @@ class MainController extends Controller {
         }
     }
 
-    public function search($tag = NULL) {
+    public function search(string $tag = NULL) : void {
         if (isset($_POST["search"]) && $_POST["search"] != NULL) {
             $tag = (string)$_POST["search"];
             $data = $this->model->getSearchPage($tag);
@@ -33,7 +33,7 @@ class MainController extends Controller {
         }
     }
 
-    public function post($post_id = NULL) {
+    public function post(int $post_id = NULL) : void {
         if (isset($post_id)) {
             $post_id = (int)$post_id;
             $data = $this->model->getPostPage($post_id);

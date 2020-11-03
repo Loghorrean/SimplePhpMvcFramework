@@ -1,3 +1,0 @@
-(Tue Oct 27 11:17:40 2020) Action: Poland12345 just got registered
-(Tue Oct 27 11:18:15 2020) Action: Poland12345 just logged in
-(Tue Oct 27 11:18:22 2020) Action: Poland12345 just logged out

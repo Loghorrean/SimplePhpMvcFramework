@@ -6,7 +6,7 @@ class CrudPostsController extends Database implements CrudController {
 
     public function getAll() : array {
         $sql = "SELECT users.username AS 'username', posts.* FROM posts ";
-        $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id WHERE post_status = 'Published'";
+        $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id WHERE post_status = 'Published' ";
         return $this->getRows($sql);
     }
 

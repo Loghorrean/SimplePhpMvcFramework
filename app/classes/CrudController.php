@@ -7,7 +7,7 @@ interface CrudController {
 
     public function Update(array $values) : void;
 
-    public function getAll() : array ;
+    public function getAll() : array;
 
     public function getOneById(int $id) : array;
 }
