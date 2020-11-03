@@ -1,31 +1,36 @@
 <?php
 namespace App\Classes;
 trait basicPdoFunctions {
-    private function prepare($sql) {
+    private function prepare(string $sql) : \PDOStatement {
         return $this->pdo->prepare($sql);
     }
 
-    private function query($sql) {
+    private function query(string $sql) : \PDOStatement {
         return $this->pdo->query($sql);
     }
 
-    public function lastInsertId() {
+    public function lastInsertId() : string {
         return $this->pdo->lastInsertId();
     }
 
-    private function beginTransaction() {
+    private function beginTransaction() : bool {
         return $this->pdo->beginTransaction();
     }
 
-    private function commit() {
+    private function commit() : bool {
         return $this->pdo->commit();
     }
 
-    private function rollBack() {
+    private function rollBack() : bool {
         return $this->pdo->rollBack();
     }
 
-    private function getDataType($value) {
+    /**
+     * Returns the PDO param depending on the type pf the variable passes
+     * @param string $value
+     * @return string
+     */
+    private function getDataType(string $value) : string {
         switch(true) {
             case is_int($value) :
                 return "\PDO::PARAM_INT";
@@ -38,17 +43,34 @@ trait basicPdoFunctions {
         }
     }
 
-    protected function run($sql, $values = []) {
+    /**
+     * Returns the integer representation of the PDO parameter string passed
+     * @param string $type
+     * @return int
+     */
+    private function pdoTypeToInteger(string $type) : int {
+        switch(true) {
+            case $type == "\PDO::PARAM_INT" :
+                return 1;
+            case $type == "\PDO::PARAM_BOOL" :
+                return 5;
+            case $type == "\PDO::PARAM_NULL" :
+                return 0;
+            default :
+                return 2;
+        }
+    }
+
+    protected function run(string $sql, array $values = []) : \PDOStatement {
         try {
             if (!empty($values)) {
                 $query = $this->prepare($sql);
                 // $key is a mark for the prepare statement (like :id, :name and so on)
                 // $v is what you want to insert into the database
-                foreach ($values as $key => &$v) {
-                    // $data_type = $this->getDataType($v);
-                    // echo $data_type;
-                    // TODO: fix issue with dynamic data_type
-                    $query->bindValue($key, $v);
+                foreach ($values as $key => $v) {
+                     $data_type = $this->getDataType($v);
+                     $data_type = $this->pdoTypeToInteger($data_type);
+                    $query->bindValue($key, $v, $data_type);
                 }
                 $query->execute();
                 return $query;
@@ -62,15 +84,15 @@ trait basicPdoFunctions {
         }
     }
 
-    public function getRow($sql, $values = []) {
+    public function getRow(string $sql, array $values = []) : array {
         return $this->run($sql, $values)->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public function getRows($sql, $values = []) {
+    public function getRows(string $sql, array $values = []) : array {
         return $this->run($sql, $values)->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function sql($sql, $values) {
+    public function sql(string $sql, array $values = []) : \PDOStatement {
         return $this->run($sql, $values);
     }
 }

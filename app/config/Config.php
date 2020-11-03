@@ -15,3 +15,5 @@ define('URL_ROOT', 'http://localhost/mvcframework');
 define ("MAX_FILE_SIZE", 5000000);
 //Allowed types of files to upload
 define ("ALLOWED_TYPES", array("jpeg", "png", "jpg", "bmp", "gif"));
+//Posts per page (test)
+define ("POSTS_PER_PAGE", 5);

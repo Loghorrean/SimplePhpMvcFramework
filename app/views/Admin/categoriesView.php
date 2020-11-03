@@ -22,7 +22,7 @@
                                 <span class = "text-danger"><?=$data["cat_title_error"]?></span>
                             </div>
                             <div class = "form-group">
-                                <input class = "btn brn-primary" type="submit" name="submit_add" value = "Add category">
+                                <input class = "btn btn-primary" type="submit" name="submit_add" value = "Add category">
                             </div>
                         </form>
                         <form action="" method = "POST">

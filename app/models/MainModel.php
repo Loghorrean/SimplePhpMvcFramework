@@ -18,60 +18,25 @@ class MainModel implements Model {
         $this->comments = CrudCommentsController::getInstance();
     }
 
-    private function getCategories($cat_id = NULL) {
-        if (isset($cat_id)) {
-            $sql = "SELECT * FROM category WHERE cat_id = :id";
-            return $this->categories->getRows($sql, ["id" => $cat_id]);
-        }
-        else {
-            $sql = "SELECT * FROM category";
-            return $this->categories->getRows($sql);
-        }
-    }
-
-    private function getPosts($post_id = NULL) {
-        if (isset($post_id)) {
-            $sql = "SELECT users.username AS 'username', posts.* FROM posts ";
-            $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id WHERE post_status = 'Published' AND post_id = :id";
-            return $this->posts->getRows($sql, ["id" => $post_id]);
-        }
-        else {
-            $sql = "SELECT users.username AS 'username', posts.* FROM posts ";
-            $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id WHERE post_status = 'Published'";
-            return $this->posts->getRows($sql);
-        }
-    }
-
-    private function getUsers($user_id = NULL) {
-        if (isset($user_id)) {
-            $sql = "SELECT * FROM users WHERE user_id = :id";
-            return $this->users->getRow($sql, ["id" => $user_id]);
-        }
-        else {
-            $sql = "SELECT * FROM users";
-            return $this->users->getRows($sql);
-        }
-    }
-
-    private function getNavigationData(&$data) {
-        $data["categories"] = $this->getCategories();
+    private function getNavigationData(array &$data) : void {
+        $data["categories"] = $this->categories->getAll();
         $data["isAdmin"] = false;
         if (isset($_SESSION["user_id"]) && $_SESSION["user_role"] === "Admin") {
             $data["isAdmin"] = true;
         }
     }
 
-    public function getData() {
+    public function getData() : array {
         $data = array();
         $this->getNavigationData($data);
-        $data["posts"] = $this->getPosts();
+        $data["posts"] = $this->posts->getAll();
         foreach($data["posts"] as &$post) {
             $post["post_content"] = (strlen($post["post_content"]) > 35) ? substr($post["post_content"], 0, 35) . "..." : $post["post_content"];
         }
         return $data;
     }
 
-    public function getCatPage($cat_title) {
+    public function getCatPage(string $cat_title) : array {
         $data = array();
         $this->getNavigationData($data);
         $sql = "SELECT users.username AS 'username', posts.*, category.cat_title AS 'cat_title' FROM posts ";
@@ -86,7 +51,7 @@ class MainModel implements Model {
         return $data;
     }
 
-    public function getSearchPage($tag) {
+    public function getSearchPage(string $tag) : array {
         $data = array();
         $data["search_item"] = $tag;
         $tag = "%".htmlspecialchars($tag)."%";
@@ -97,7 +62,7 @@ class MainModel implements Model {
         return $data;
     }
 
-    public function getPostPage($post_id) {
+    public function getPostPage(int $post_id) : array {
         if (isset($_POST["create_comment"])) {
             $this->comments->Insert(["post_id" => $post_id, "auth_id" => $_SESSION["user_id"],
                 "cont" => $_POST["comment_content"], "stat" => 'Unapproved']);
@@ -108,27 +73,21 @@ class MainModel implements Model {
         $data = array();
         $this->getNavigationData($data);
         $sql = "SELECT users.username AS 'username', posts.* FROM posts ";
-        $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id WHERE post_status = 'Published' AND post_id = :id";
+        $sql .= "LEFT JOIN users ON users.user_id = posts.post_author_id ";
+        $sql .= "WHERE post_status = 'Published' AND post_id = :id";
         $data["post"] = $this->posts->getRow($sql, ["id" => $post_id]);
         if (isset($_SESSION["user_id"])) {
             $data["editButton"] = $this->checkEditButton($data["post"]["post_author_id"]);
         }
-        $sql = "SELECT users.username AS 'comment_author', comments.* FROM comments ";
-        $sql .= "LEFT JOIN users ON users.user_id = comments.comment_author_id WHERE comment_post_id = :id ";
+        $sql = "SELECT users.username AS 'comment_author', comments.comment_date, comments.comment_content FROM comments ";
+        $sql .= "LEFT JOIN users ON users.user_id = comments.comment_author_id ";
+        $sql .= "WHERE comment_post_id = :id ";
         $sql .= "AND comment_status = 'Approved' ORDER BY comment_id DESC";
         $data["comments"] = $this->comments->getRows($sql, ["id" => $post_id]);
         return $data;
     }
 
-    private function checkUserRights($user) {
-        $user_role = $user["user_role"];
-        if ($user_role === "Admin") {
-            return true;
-        }
-        return false;
-    }
-
-    private function checkEditButton($post_author_id) {
+    private function checkEditButton(int $post_author_id) : bool {
         if ($_SESSION["user_role"] === "Admin" || $post_author_id === $_SESSION["user_id"]) {
             return true;
         }
